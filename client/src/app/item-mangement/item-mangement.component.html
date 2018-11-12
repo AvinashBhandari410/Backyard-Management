@@ -1,0 +1,43 @@
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<!-- Paging apply through below website -->
+<!-- https://www.youtube.com/watch?v=7sMu-qO5IN8 -->
+<div class="container">
+  <div class="row">
+    <div class="well">
+      <h1 class="text-center">All Items</h1>
+      <div *ngFor="let item of items | paginate: { itemsPerPage:3, currentPage: p }">
+        <div class="list-group" *ngIf="changeOdd">
+          <a href="javascript:void(0)" ngClass="{{isodd ? 'list-group-item active' : 'list-group-item'}}">
+            <div class="media col-md-3">
+              <figure class="pull-left">
+                <img class="media-object img-rounded img-responsive" src="assets/UCM_logo.png" alt="placehold.it/350x250">
+              </figure>
+            </div>
+            <div class="col-md-6">
+              <h4 class="list-group-item-heading"> Item Name: {{item.item_name}} </h4>
+              <h4 class="list-group-item-heading"> Item Number: {{item.item_number}} </h4>
+              <h5 class="list-group-item-heading"> Item Description: </h5>
+              <p class="list-group-item-text"> {{item.item_description}}
+              </p>
+            </div>
+            <div class="col-md-3 text-center">
+              <h2> {{item.item_cost | currency:'USD' }}</h2>
+              <button type="button" *ngIf="item.isItem_Approved" class="btn btn-success" (click)="updateStatus(item._id,item.isItem_Approved)">
+                Approved </button>
+              <button type="button" *ngIf="!item.isItem_Approved" class="btn btn-warning" (click)="updateStatus(item._id,item.isItem_Approved)">
+                Pending </button>
+              <div class="stars">
+                Uploaded by: {{item.userId.full_name}}
+              </div>
+              <p> Uploaded On: {{item.item_date}} </p>
+              <p> Pickup Location: {{item.item_Location}} </p>
+            </div>
+          </a>
+        </div>
+      </div>
+      <ul class="pagination pull-right">
+          <pagination-controls (pageChange)="p = $event"></pagination-controls>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+/* You can add global styles to this file, and also import other style files*/
+
+@import '../src/assets/bootstrap.css';
+
+body {
+    padding-top: 4.5rem;
+    min-height: 75rem;
+  }
+
+  .bg-dark {
+    background-color: lightseagreen!important;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: lightseagreen;
+  border-color: lightseagreen;
+}
+
+.btn-primary:disabled {
+  color: #fff;
+  background-color: lightseagreen;
+  border-color: lightseagreen;
+}
+
+.btn-primary:hover {
+  color: #fff;
+  background-color:#404041;
+  border-color: #404041;
+}
+

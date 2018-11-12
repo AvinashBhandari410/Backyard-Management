@@ -1,0 +1,73 @@
+<div class="container">
+  <div class="row">
+
+    <div class="col-xs-12 col-sm-8 col-md-12 col-sm-offset-2 col-md-offset-3">
+      <ngb-alert *ngIf="itemSuccess" type="success" (close)="itemSuccess = null">Item added sucessfully!</ngb-alert>
+      <!-- signup form -->
+      <form [formGroup]="itemForm" (ngSubmit)="f.form.valid && addItem()" #f="ngForm" class="form-signin">
+        <img class="mb-4" src="assets/UCM_logo.png" alt="" width="100" height="72">
+
+        <h1 class="h3 mb-3 font-weight-normal">Please sign Up</h1>
+        <div class="progress">
+          <div class="progress-bar progress-bar-striped active" role="progressbar" style="width: 25%;" aria-valuenow="25"
+            aria-valuemin="0" aria-valuemax="100">25%</div>
+        </div>
+        <!-- signup name -->
+        <div class="formGroup">
+          <div class="form-control">
+            <label for="item_name" class="sr-only">Item Name</label>
+            <input type="text" id="item_name" name="item_name" formControlName="item_name" class="form-control"
+              tabindex="1" required placeholder="Item Name">
+          </div>
+        </div>
+        <div class="formGroup">
+          <div class="form-control">
+            <!-- signup email -->
+            <label for="item_description" class="sr-only">Item Description </label>
+            <input type="text" id="item_description" name="item_description" formControlName="item_description" class="form-control"
+              placeholder="Item Description" aria-multiline="true" tabindex="2" required>
+          </div>
+        </div>
+        <!-- signup password -->
+        <div class="formGroup">
+          <div class="form-control">
+            <label for="item_image" class="sr-only">Item Image</label>
+            <!-- <input type="file"  name="item_image" tabindex="3" (change)="onFileSelected($event)" formControlName="item_image"> -->
+            <input type="file" id="item_image" name="item_image" (change)="onFileChange($event)" #fileInput
+              formControlName="item_image" tabindex="3">
+          </div>
+        </div>
+        <!-- confirm password -->
+        <div class="formGroup">
+          <div class="form-control">
+            <label for="item_cost" class="sr-only">Item Cost</label>
+            <input type="text" id="item_cost" name="item_cost" formControlName="item_cost" class="form-control"
+              tabindex="4" required placeholder="Item Cost">
+          </div>
+        </div>
+        <div class="formGroup">
+          <!-- signup email -->
+          <div class="form-control">
+            <label for="item_Location" class="sr-only">Item Pickup Location </label>
+            <input type="text" id="item_Location" name="item_Location" formControlName="item_Location" #pickUpAuto
+              class="form-control" placeholder="Item Location" aria-multiline="true" tabindex="5" required>
+          </div>
+        </div>
+        <div class="formGroup">
+          <div class="form-control">
+            <label class="checkbox-inline">
+              <input type="checkbox" name="isItem_Available" id="isItem_Available" formControlName="isItem_Available" /> Item Available
+            </label>
+          </div>
+        </div>
+        <div class="formGroup">
+          <button class="btn btn-lg btn-primary btn-block" [disabled]="itemForm.invalid" tabindex="6" type="submit">Add</button>
+          <button type="button" class="btn btn-link" (click)="loginshow=true" tabindex="7">Cancel</button>
+        </div>
+        <p>
+          <!-- Sign Up Form Status: {{ itemForm.status }}  -->
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
