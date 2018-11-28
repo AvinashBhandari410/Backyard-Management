@@ -9,8 +9,11 @@ export interface Item {
     item_image?:File;
     item_cost?:string;
     isItem_Approved?:boolean;
+    longitude: number;
+    latitude: number;
     isItem_Available?:boolean;
 }
+
 
 
 export interface ItemDetails {
@@ -23,6 +26,17 @@ export interface ItemDetails {
     item_image?:File;
     item_cost?:string;
     isItem_Approved?:boolean;
+    longitude: number;
+    latitude: number;
     isItem_Available?:boolean;
-    userId: User
+    userId: User,
+    itemInterest: ItemInterest []
+}
+
+
+export interface ItemInterest {
+    _id:string;
+    isItemInterested?:boolean;
+    userId:string;
+    itemId:string;
 }

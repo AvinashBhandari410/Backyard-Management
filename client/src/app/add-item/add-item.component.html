@@ -8,61 +8,115 @@
         <img class="mb-4" src="assets/UCM_logo.png" alt="" width="100" height="72">
 
         <h1 class="h3 mb-3 font-weight-normal">Please sign Up</h1>
-        <div class="progress">
-          <div class="progress-bar progress-bar-striped active" role="progressbar" style="width: 25%;" aria-valuenow="25"
-            aria-valuemin="0" aria-valuemax="100">25%</div>
-        </div>
+        <!-- <div class="formGroup">
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped active" role="progressbar" style="width: 25%;" aria-valuenow="25"
+              aria-valuemin="0" aria-valuemax="100">25%</div>
+          </div>
+        </div> -->
         <!-- signup name -->
         <div class="formGroup">
-          <div class="form-control">
-            <label for="item_name" class="sr-only">Item Name</label>
-            <input type="text" id="item_name" name="item_name" formControlName="item_name" class="form-control"
-              tabindex="1" required placeholder="Item Name">
-          </div>
-        </div>
-        <div class="formGroup">
-          <div class="form-control">
-            <!-- signup email -->
-            <label for="item_description" class="sr-only">Item Description </label>
-            <input type="text" id="item_description" name="item_description" formControlName="item_description" class="form-control"
-              placeholder="Item Description" aria-multiline="true" tabindex="2" required>
-          </div>
-        </div>
-        <!-- signup password -->
-        <div class="formGroup">
-          <div class="form-control">
-            <label for="item_image" class="sr-only">Item Image</label>
-            <!-- <input type="file"  name="item_image" tabindex="3" (change)="onFileSelected($event)" formControlName="item_image"> -->
-            <input type="file" id="item_image" name="item_image" (change)="onFileChange($event)" #fileInput
-              formControlName="item_image" tabindex="3">
-          </div>
-        </div>
-        <!-- confirm password -->
-        <div class="formGroup">
-          <div class="form-control">
-            <label for="item_cost" class="sr-only">Item Cost</label>
-            <input type="text" id="item_cost" name="item_cost" formControlName="item_cost" class="form-control"
-              tabindex="4" required placeholder="Item Cost">
+          <label for="item_name" class="sr-only">Item Name</label>
+          <input type="text" id="item_name" name="item_name" formControlName="item_name" class="form-control" tabindex="1"
+            required placeholder="Item Name">
+          <div [ngClass]="{'has-error': (itemForm.controls.item_name.errors && itemForm.controls.item_name.dirty),
+            'has-success': !itemForm.controls.item_name.errors}">
+            <ul class="help-block">
+              <li class="alert alert-danger" *ngIf="itemForm.controls.item_name.errors?.required && itemForm.controls.item_name.dirty">
+                <font size="2">This
+                  field is required</font>
+              </li>
+            </ul>
           </div>
         </div>
         <div class="formGroup">
           <!-- signup email -->
-          <div class="form-control">
-            <label for="item_Location" class="sr-only">Item Pickup Location </label>
-            <input type="text" id="item_Location" name="item_Location" formControlName="item_Location" #pickUpAuto
-              class="form-control" placeholder="Item Location" aria-multiline="true" tabindex="5" required>
+          <label for="item_description" class="sr-only">Item Description </label>
+          <textarea class="form-control" rows="2" placeholder="Item Description" id="item_description" name="item_description"
+            tabindex="2" formControlName="item_description"></textarea>
+          <!-- <input type="text" id="item_description" name="item_description" formControlName="item_description" class="form-control"
+            placeholder="Item Description" aria-multiline="true" tabindex="2" required> -->
+          <div [ngClass]="{'has-error': (itemForm.controls.item_description.errors && itemForm.controls.item_description.dirty),
+            'has-success': !itemForm.controls.item_description.errors}">
+            <ul class="help-block">
+              <li class="alert alert-danger" *ngIf="itemForm.controls.item_description.errors?.required && itemForm.controls.item_description.dirty">
+                <font size="2">This
+                  field is required</font>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- signup password -->
+        <div class="formGroup">
+          <label for="item_image" class="sr-only">Item Image</label>
+          
+          <!-- <input type="file"  name="item_image" tabindex="3" (change)="onFileSelected($event)" formControlName="item_image"> -->
+          <!-- <input type="file" id="item_image" name="item_image" (change)="onFileChange($event)" #fileInput
+            formControlName="item_image" tabindex="3"> -->
+            <input type="file" multiple formControlName="item_image" value=""  (change)="onFileChange($event)"
+            tabindex="3" />
+          <div [ngClass]="{'has-error': (itemForm.controls.item_image.errors && itemForm.controls.item_image.dirty),
+            'has-success': !itemForm.controls.item_image.errors}">
+            <ul class="help-block">
+              <li class="alert alert-danger" *ngIf="itemForm.controls.item_image.errors?.required && itemForm.controls.item_image.dirty">
+                <font size="2">This
+                  field is required</font>
+              </li>
+            </ul>
+          </div>
+  
+      
+      
+      <!-- <div *ngIf="uploadfile.invalid && (uploadfile.dirty || uploadfile.touched)" >
+          <div class="invalid-feedback d-block" *ngIf="uploadfile.errors.required">choose files.</div>
+        </div> -->
+  
+
+        </div>
+        <!-- confirm password -->
+        <div class="formGroup">
+          <label for="item_cost" class="sr-only">Item Cost</label>
+          <input type="text" id="item_cost" name="item_cost" formControlName="item_cost" class="form-control" tabindex="4"
+            required placeholder="Item Cost">
+          <div [ngClass]="{'has-error': (itemForm.controls.item_cost.errors && itemForm.controls.item_cost.dirty),
+            'has-success': !itemForm.controls.item_cost.errors}">
+            <ul class="help-block">
+              <li class="alert alert-danger" *ngIf="itemForm.controls.item_cost.errors?.required && itemForm.controls.item_cost.dirty">
+                <font size="2">This
+                  field is required</font>
+              </li>
+            </ul>
           </div>
         </div>
         <div class="formGroup">
-          <div class="form-control">
-            <label class="checkbox-inline">
-              <input type="checkbox" name="isItem_Available" id="isItem_Available" formControlName="isItem_Available" /> Item Available
-            </label>
+          <!-- signup email -->
+          <label for="item_Location" class="sr-only">Item Pickup Location </label>
+          <input type="text" id="item_Location" name="item_Location" formControlName="item_Location" #pickUpAuto class="form-control"
+            placeholder="Item Location" aria-multiline="true" tabindex="5" required>
+          <div [ngClass]="{'has-error': (itemForm.controls.item_Location.errors && itemForm.controls.item_Location.dirty),
+            'has-success': !itemForm.controls.item_Location.errors}">
+            <ul class="help-block">
+              <li class="alert alert-danger" *ngIf="itemForm.controls.item_Location.errors?.required && itemForm.controls.item_Location.dirty">
+                <font size="2">This
+                  field is required</font>
+              </li>
+            </ul>
           </div>
         </div>
         <div class="formGroup">
-          <button class="btn btn-lg btn-primary btn-block" [disabled]="itemForm.invalid" tabindex="6" type="submit">Add</button>
-          <button type="button" class="btn btn-link" (click)="loginshow=true" tabindex="7">Cancel</button>
+          <label class="checkbox-inline">
+            <input type="checkbox" name="isItem_Available" id="isItem_Available" formControlName="isItem_Available" />
+            Item Available
+          </label>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <button class="btn btn-lg btn-primary btn-block" [disabled]="itemForm.invalid" tabindex="6" type="submit">Add</button>
+          </div>
+          <div class="col-md-6">
+            <button type="button" class="btn btn-lg btn-secondary btn-block" [routerLink]="['adminApprovalUser']"
+              tabindex="7">Cancel</button>
+          </div>
         </div>
         <p>
           <!-- Sign Up Form Status: {{ itemForm.status }}  -->

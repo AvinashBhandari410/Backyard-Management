@@ -56,4 +56,26 @@ export class ScriptService {
         });
     }
 
+    //https://medium.com/@balramchavan/using-async-await-feature-in-angular-587dd56fdc77
+    // Using async-await feature in Angular
+    geocodeAddress(address): any {
+
+        return new Promise(resolve => {
+            var geocoder = new google.maps.Geocoder();
+            var latlng = new Array(2);
+            geocoder.geocode({ 'address': address }, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    latlng[0] = results[0].geometry.location.lat();
+                    latlng[1] = results[0].geometry.location.lng();
+                    resolve(latlng);
+                    //this._callback(latlng); 
+                    //  callback(latlng); // call the callback function here
+                } else {
+                    console.log("Geocode was not successful for the following reason: " + status);
+                }
+            });
+        });
+
+    }
+
 }

@@ -18,6 +18,9 @@ import {NgxPaginationModule} from 'ngx-pagination';
 import { UserItemManagementComponent } from './user-item-management/user-item-management.component';
 import { HomeDashboardComponent } from './home-dashboard/home-dashboard.component';
 import { HomePageComponent } from './home-page/home-page.component';
+import { GoogleMapsComponent } from './google-maps/google-maps.component';
+import { AgmCoreModule } from '@agm/core';
+import { UseritemHistroyComponent } from './useritem-histroy/useritem-histroy.component';
 // import {NgbDateCustomParserFormatter} from './shared/dateFormat'
 // import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 
@@ -35,9 +38,15 @@ import { HomePageComponent } from './home-page/home-page.component';
      UserManagementComponent,
      UserItemManagementComponent,
      HomeDashboardComponent,
-     HomePageComponent
+     HomePageComponent,
+     GoogleMapsComponent,
+     UseritemHistroyComponent
   ],
   imports: [
+    AgmCoreModule.forRoot({
+      apiKey: "AIzaSyBe8qhHfBKRdeOK0iWAQiYtQWStEyQOXC4",
+      libraries: ["places"]
+    }),
    BrowserModule,
     AppRoutingModule,
     HttpClientModule,

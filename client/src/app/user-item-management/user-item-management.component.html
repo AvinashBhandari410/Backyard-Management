@@ -5,12 +5,13 @@
   <div class="row">
     <div class="well">
       <h1 class="text-center">All Items</h1>
-      <div *ngFor="let item of items | paginate: { itemsPerPage:25, currentPage: p }">
+      <div *ngFor="let item of items | paginate: { itemsPerPage:5, currentPage: p }">
       <div class="list-group" *ngIf="changeOdd">
         <a href="javascript:void(0)" ngClass="{{isodd ? 'list-group-item active' : 'list-group-item'}}">
           <div class="media col-md-3">
             <figure class="pull-left">
-              <img class="media-object img-rounded img-responsive" src="assets/UCM_logo.png" alt="placehold.it/350x250">
+              <!-- <img class="media-object img-rounded img-responsive" src="assets/UCM_logo.png" alt="placehold.it/350x250">-->
+              <img class="media-object img-rounded img-responsive" src="{{item.item_image}}" alt="placehold.it/350x250">  
             </figure>
           </div>
           <div class="col-md-6">

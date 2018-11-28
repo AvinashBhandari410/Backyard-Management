@@ -7,9 +7,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeDashboardComponent implements OnInit {
 
+  isUserLogin: boolean = false;
+  
   constructor() { }
 
   ngOnInit() {
+    if(localStorage.getItem('currentUser')!=null && localStorage.getItem('currentUser')!='')
+    {
+      this.isUserLogin=true;
+    }
+  }
+
+  logout() {
+    localStorage.removeItem('currentUser');
   }
 
 }

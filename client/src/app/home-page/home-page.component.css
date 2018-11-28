@@ -18,6 +18,19 @@
     height: 100%;
   }
 
-  .product_view .modal-dialog{max-width: 800px; width: 100%;}
+  
+
+  .product_view .modal-dialog{ width: 100%;}
   .pre-cost{text-decoration: line-through; color: #a5a5a5;}
   .space-ten{padding: 10px 0;}
+
+  html, body, #map-canvas {
+    height: 80%;
+    width: 80%;
+    margin: 0px;
+    padding: 0px
+}
+
+  /* Icon CSS */
+
+/* Icon CSS */

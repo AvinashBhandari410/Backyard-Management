@@ -21,7 +21,7 @@
           </thead>
           <tbody>
 
-            <tr *ngFor="let user of users | paginate: { itemsPerPage:5, currentPage: p }">
+            <tr *ngFor="let user of users | paginate: { itemsPerPage:25, currentPage: p }">
               <td>{{user.full_name}}</td>
               <td>{{user.email_address}}</td>
               <td>{{user.phone_number}}</td>
@@ -38,7 +38,7 @@
 
         <div class="clearfix"></div>
         <ul class="pagination pull-right">
-            <pagination-controls (pagechange)= "p =$event"></pagination-controls>
+            <pagination-controls (pagechange)= "p = $event"></pagination-controls>
         </ul>
 
       </div>

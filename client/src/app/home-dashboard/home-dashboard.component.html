@@ -10,17 +10,26 @@
         <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
           <a class="nav-link" [routerLink]="['home']">Home</a>
         </li>
-        <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
+        <li class="nav-item" *ngIf="!isUserLogin"  [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
           <a class="nav-link">SignUp</a>
         </li>
-        <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
-          <a class="nav-link" [routerLink]="['login']" >Login</a>
-        </li>
-
-        <li   class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
-            <a class="nav-link" (click)="logout()">Logout</a>
-          </li>
       </ul>
+
+      <ul class="navbar-nav ml-auto">
+          <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
+            <a class="nav-link" *ngIf="!isUserLogin"  [routerLink]="['login']" >Login</a>
+          </li>
+          
+          
+            <li class="nav-item">
+                <a class="nav-link" *ngIf="isUserLogin" (click)="logout()" href="#">Logout</a>
+              </li>
+          <!-- <li *ngIf="isUserLogin"  class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
+            <a class="nav-link" (click)="logout()">Logout</a>
+            </li> -->
+
+            
+        </ul>
       
       <div class="form-inline my-2 my-lg-0 nav-item">
         <!-- <ul>

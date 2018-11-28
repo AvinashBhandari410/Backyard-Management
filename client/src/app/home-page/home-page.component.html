@@ -1,5 +1,5 @@
 <!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+<!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
         <a class="navbar-brand" href="#">Backyard Management</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
@@ -25,28 +25,16 @@
             </ul>
         </div>
     </div>
-</nav>
+</nav> -->
 
 <!-- Page Content -->
 <div class="container">
-
-    <!-- Jumbotron Header -->
-    <header class="jumbotron my-4">
-        <img src="https://pitok.my.id/wp-content/uploads/2018/10/Jenis-Bisnis-Online-menguntungkan-dropship.png" alt=""
-            width="1000" height="400">
-        <!-- <h1 class="display-3">A Warm Welcome!</h1>
-        <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa, ipsam, eligendi, in quo sunt
-            possimus non incidunt odit vero aliquid similique quaerat nam nobis illo aspernatur vitae fugiat numquam
-            repellat.</p>
-        <a href="#" class="btn btn-primary btn-lg">Call to action!</a> -->
-    </header>
-
     <!-- Page Features -->
     <div class="row text-center">
 
         <div class="col-lg-3 col-md-6 mb-4" *ngFor="let item of items | paginate: { itemsPerPage:8, currentPage: p }">
             <div class="card">
-                <img class="card-img-top" src="assets/UCM_logo.png" alt="" height="150">
+                <img class="card-img-top" src="{{item.item_image}}" alt="" height="150">
 
                 <font size="2">{{item.item_cost | currency:'USD' }}</font>
                 <div class="card-body">
@@ -57,12 +45,49 @@
                     <!-- <label class="card-text" title="{{item.item_description}}">{{item.item_description.substring(0,100)}}</label> -->
                 </div>
                 <div class="card-footer">
-                    <!-- <a href="javascript:void(0)" *ngIf="item.isItem_Available" class="btn btn-primary">Available</a> -->
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#product_view"><i class="fa fa-search"></i> Quick View</button>
+                    <!-- <a href="javascript:void(0)" *ngIf="item.isItem_Available" class="btn btn-primary" data-target="#product_view">Available</a> -->
+                    <!-- <button type="button" (click)="ShowItemDetails(item._id)" *ngIf="item.isItem_Available" class="btn btn-primary"
+                        data-toggle="modal" attr.data-target="#myModal_{{item._id}}">Available</button> -->
+
+                    <button type="button" *ngIf="item.isItem_Available" data-toggle="modal" class="btn btn-primary"
+                        (click)="popupItemId=item._id; popupItemImage=item.item_image;popupItemName=item.item_name;popupItemDescription=item.item_description;popupItemCost=item.item_cost;open(content);ShowItemDetails(item._id,'37.402800', '-122.056240')">
+                        Available</button>
+                    <!-- <button type="button" (click)="requestForItem(item._id)" *ngIf="item.isItem_Available" class="btn btn-primary"
+                            data-toggle="modal">Available</button> -->
+
                     <img *ngIf="!item.isItem_Available" width="100" height="30" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZ4tCwLMjmAgIgRzBTUQK16D9OE95zzLehgizC6S57qlgwuukW">
+
                     <!-- <a href="javascript:void(0)" *ngIf="!item.isItem_Available" class="btn btn-link" aria-disabled="true">Soldout</a> -->
                     <!-- <a  class="btn btn-primary">Find Out More!</a> -->
                 </div>
+                <ng-container *ngIf="item.item_interested != null && item.item_interested.length>0; then loggedIn; else loggedOut">
+                </ng-container>
+
+                <ng-template #loggedIn>
+                    <div *ngFor="let itemIn of item.item_interested">
+
+                        <a href="javascript:void(0)" *ngIf="itemIn.itemId==item._id && itemIn.userId==loggedInUserId && itemIn.isItemInterested">
+                            <span class="glyphicon glyphicon-star" style=" font-size: 30px;color: orange" (click)="deleteUserItemInterest(itemIn._id)"></span>
+                        </a>
+                        <a href="javascript:void(0)">
+                            <span *ngIf="isUserLogin && itemIn.userId!=loggedInUserId" class="glyphicon glyphicon-star-empty"
+                                style=" font-size: 30px;color: orange" (click)="addUserItemInterest(item._id,true)"></span>
+                        </a>
+                        <a href="javascript:void(0)" *ngIf="itemIn.itemId==item._id && itemIn.userId==loggedInUserId && !itemIn.isItemInterested">
+                            <span class="glyphicon glyphicon-star-empty" style=" font-size: 30px;color: orange" (click)="addUserItemInterest(itemIn._id,true)"></span>
+                        </a>
+                    </div>
+                </ng-template>
+                <ng-template #loggedOut>
+                    <div>
+                        <div *ngIf="isUserLogin">
+                            <a href="javascript:void(0)">
+                                <span class="glyphicon glyphicon-star-empty" style=" font-size: 30px;color: orange"
+                                    (click)="addUserItemInterest(item._id,true)"></span>
+                            </a>
+                        </div>
+                    </div>
+                </ng-template>
             </div>
         </div>
         <!-- /.row -->
@@ -70,71 +95,80 @@
     <ul class="pagination pull-right">
         <pagination-controls (pageChange)="p = $event"></pagination-controls>
     </ul>
-    <div class="modal fade product_view" id="product_view">
+</div>
+
+<!-- modal pop up starts :: booking -->
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Item Details</h4>
+        <!-- <a href="#" data-dismiss="modal" class="pull-right" style="margin-left: -170px"><span class="glyphicon glyphicon-remove"></span></a> -->
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-6 product_img">
+                <img src="{{popupItemImage}}" class="img-responsive">
+                <div id="map-canvas" width="40%" height="20%"></div>
+            </div>
+            <div class="col-md-6 product_content">
+                <h4>Item Name: <span>{{popupItemName}} </span></h4>
+                <label title="{{popupItemDescription}}">{{popupItemDescription.substring(0,200)}}</label>
+                <h3 class="cost"><span class="glyphicon"></span>{{popupItemCost | currency:'USD'}}</h3>
+                <div class="space-ten"></div>
+                <div class="btn-ground">
+
+                    <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-star"></span>
+                        Ask for Details</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</ng-template>
+<!-- modal pop up ends :: booking -->
+<!--Model Popup-->
+
+<!-- <div class="modal fade" id="myModal_{{item._id}}" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <a href="#" data-dismiss="modal" class="class pull-right"><span class="glyphicon glyphicon-remove"></span></a>
-                        <h3 class="modal-title">HTML5 is a markup language</h3>
+                        <a href="#" data-dismiss="modal" class="pull-right" style="margin-left: -170px"><span class="glyphicon glyphicon-remove"></span></a>
+                        <h3 class="modal-title">Item Details</h3>
                     </div>
                     <div class="modal-body">
                         <div class="row">
+                            <div id="map-canvas_{{item._id}}" width="50%" height="50%"></div>
                             <div class="col-md-6 product_img">
-                                <img src="http://img.bbystatic.com/BestBuy_US/images/products/5613/5613060_sd.jpg" class="img-responsive">
+                                <img src="{{item.item_image}}" class="img-responsive">
+                                <div id="map-canvas" width="30%" height="30%"></div>
                             </div>
                             <div class="col-md-6 product_content">
-                                <h4>Product Id: <span>51526</span></h4>
-                                <div class="rating">
-                                    <span class="glyphicon glyphicon-star"></span>
-                                    <span class="glyphicon glyphicon-star"></span>
-                                    <span class="glyphicon glyphicon-star"></span>
-                                    <span class="glyphicon glyphicon-star"></span>
-                                    <span class="glyphicon glyphicon-star"></span>
-                                    (10 reviews)
-                                </div>
-                                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                <h3 class="cost"><span class="glyphicon glyphicon-usd"></span> 75.00 <small class="pre-cost"><span class="glyphicon glyphicon-usd"></span> 60.00</small></h3>
-                                <div class="row">
-                                    <div class="col-md-4 col-sm-6 col-xs-12">
-                                        <select class="form-control" name="select">
-                                            <option value="" selected="">Color</option>
-                                            <option value="black">Black</option>
-                                            <option value="white">White</option>
-                                            <option value="gold">Gold</option>
-                                            <option value="rose gold">Rose Gold</option>
-                                        </select>
-                                    </div>
-                                    <!-- end col -->
-                                    <div class="col-md-4 col-sm-6 col-xs-12">
-                                        <select class="form-control" name="select">
-                                            <option value="">Capacity</option>
-                                            <option value="">16GB</option>
-                                            <option value="">32GB</option>
-                                            <option value="">64GB</option>
-                                            <option value="">128GB</option>
-                                        </select>
-                                    </div>
-                                    <!-- end col -->
-                                    <div class="col-md-4 col-sm-12">
-                                        <select class="form-control" name="select">
-                                            <option value="" selected="">QTY</option>
-                                            <option value="">1</option>
-                                            <option value="">2</option>
-                                            <option value="">3</option>
-                                        </select>
-                                    </div>
-                                    <!-- end col -->
-                                </div>
+                                <h4>Item Name: <span>{{item.item_name}} </span></h4>
+                                <label title="{{item.item_description}}">{{item.item_description.substring(0,200)}}</label>
+                                <h3 class="cost"><span class="glyphicon"></span>{{item.item_cost | currency:'USD'
+                                    }}</h3>
                                 <div class="space-ten"></div>
                                 <div class="btn-ground">
-                                    <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-shopping-cart"></span> Add To Cart</button>
-                                    <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-heart"></span> Add To Wishlist</button>
+    
+                                    <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-star"></span>
+                                        Ask for Details</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-</div>
+        </div> -->
+<!--Model Popup-->
+
+
+<!--Google Maps-->
+<!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBe8qhHfBKRdeOK0iWAQiYtQWStEyQOXC4&libraries=places"></script> -->
 <!-- /.container -->
+
+
+
+<!-- Home page theme design -->
+<!-- https://startbootstrap.com/template-categories/ecommerce/ -->

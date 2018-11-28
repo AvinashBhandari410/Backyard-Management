@@ -41,6 +41,7 @@ export class UserItemManagementComponent implements OnInit {
       //       });
       //     }
       .subscribe(itemdata => {
+        
         if (itemdata) {
           this.items = itemdata
         }
@@ -61,7 +62,7 @@ export class UserItemManagementComponent implements OnInit {
 
 
   updateStatus(_itemId: string, isItemSoldout: boolean): void {
-    debugger
+    
     this.itemService.updateItemAvailablity(_itemId, isItemSoldout)
       .subscribe(itemdata => {
         if (itemdata) {

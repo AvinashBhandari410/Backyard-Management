@@ -10,26 +10,35 @@ import { UserManagementComponent } from './user-management/user-management.compo
 import { UserItemManagementComponent } from './user-item-management/user-item-management.component';
 import { HomeDashboardComponent } from './home-dashboard/home-dashboard.component';
 import { HomePageComponent } from './home-page/home-page.component';
-
-const routes: Routes = [{ path: '', component: HomePageComponent },
+import { GoogleMapsComponent } from './google-maps/google-maps.component';
+import {PageNotFoundComponent} from './page-not-found/page-not-found.component'
+import { UseritemHistroyComponent } from './useritem-histroy/useritem-histroy.component';
+const routes: Routes = [
 { path: 'dashboard', component: DashboardComponent,  children: [
   {path: 'addItem', component: AddItemComponent},
-  {path: 'userItemManagement', component: UserItemManagementComponent}
+  {path: 'userItemManagement', component: UserItemManagementComponent},
+  {path: 'itemRequest', component: UseritemHistroyComponent}
+  
   // otherwise redirect to home
   //{ path: '**', component: HomeDashboardComponent }
 ],canActivate: [AuthGuard] },
+
 { path: 'admindashboard', component: AdmindashboardComponent,  children: [
   {path: 'adminApprovalItems', component: ItemMangementComponent},
   {path: 'adminApprovalUser', component: UserManagementComponent}
   // otherwise redirect to home
 
 ],canActivate: [AuthGuard] },
-{ path: 'homepage', component: HomeDashboardComponent,  children: [
-  {path: 'Login', component: LoginComponent},
-  {path: 'home', component: HomePageComponent}
-  // otherwise redirect to home
 
-],canActivate: [AuthGuard] }
+// { path: 'homepage', component: HomeDashboardComponent,  children: [
+//   // {path: '', component: HomePageComponent}
+//   // otherwise redirect to home
+// ],canActivate: [AuthGuard] },
+{path:'',redirectTo:'/homepage',pathMatch:'full'},
+{ path: 'homepage', component: HomeDashboardComponent,  children: [
+  {path: 'login', component: LoginComponent},
+  {path: 'home', component: HomePageComponent}, //landing page
+  {path: '', component: HomePageComponent}] }
 ]
 
 

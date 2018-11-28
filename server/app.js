@@ -7,6 +7,11 @@ var UserController = require('./controller/userController');
 // ride controller
 var ItemController = require('./controller/itemController');
 
+var MailController = require('./controller/mailController');
+
+var publicDir = require('path').join(__dirname,'/uploads');
+app.use(express.static(publicDir));
+
 //Solve the cross site scripting issue
 //https://stackoverflow.com/questions/32500073/request-header-field-access-control-allow-headers-is-not-allowed-by-itself-in-pr
 
@@ -31,5 +36,10 @@ app.use('/user', UserController);
 
 // ride
 app.use('/item', ItemController);
+
+//Send Mail
+app.use('/mail', MailController);
+
+
 
 module.exports = app;

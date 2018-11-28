@@ -5,6 +5,8 @@ import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms'
 import { User } from '../_models/user.model'
 import { first } from 'rxjs/operators';
 import { AlertService } from '../_services/alert.service';
+import { ItemService } from '../_services/item.service';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -18,7 +20,7 @@ export class LoginComponent implements OnInit {
   signedUp: boolean;
 
 
-  constructor(private userService: UserService, private route: ActivatedRoute,
+  constructor(private userService: UserService, private route: ActivatedRoute, private itemService: ItemService,
     private router: Router,
     private fb: FormBuilder) {
   }
@@ -28,27 +30,25 @@ export class LoginComponent implements OnInit {
     // sign up
     this.userService.login(this.loginForm.value)
       .subscribe(userdata => {
-        debugger
         if (userdata != null) {
           // this.signedUp=true
           // this.loginshow=true
           this.user = userdata;
-          
+
           if (this.user.user_type.toLocaleLowerCase() == "admin") {
             localStorage.setItem('currentUser', this.user._id);
             this.router.navigate(["/admindashboard"]);
           }
-          else if(userdata.is_useractive===true && this.user.user_type.toLocaleLowerCase() === "user")
-          {
+          else if (userdata.is_useractive === true && this.user.user_type.toLocaleLowerCase() === "user") {
             localStorage.setItem('currentUser', this.user._id);
             this.router.navigate(["/dashboard"]);
           }
           else {
-          // pop up user is not active.
+            // pop up user is not active.
           }
         }
         else {
-          
+
           // pop up something went wrong.
         }
 
@@ -63,6 +63,15 @@ export class LoginComponent implements OnInit {
       .subscribe(userdata => {
         debugger
         if (userdata) {
+
+          let mailContent = {
+            from_email_address: "avinash.bhandari24@gmail.com",
+            to_email_address: "avinash.bhandari@augustconsulting.net",
+            subject: "Backyard Management: New item approval request",
+            mailbody: "Hello Admin, <br/> Please approve below item request User fullname: " + userdata.full_name + "<br/> Email Address: " + userdata.email_address + "Please click here for approval" + "localhost:4200/login"
+          }
+          this.itemService.sendMail(mailContent);
+          debugger
           this.signedUp = true
           this.loginshow = true
         }
@@ -80,18 +89,40 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     // updateOn default is change other option is blur or submit
     this.signupForm = this.fb.group({
-      full_name: ['', { updateOn: 'blur' }, Validators.required],
-      email_address: ['', { updateOn: 'blur' }, Validators.required],
-      password: ['', { updateOn: 'blur' }, Validators.required],
-      confirmPassword: ['', { updateOn: 'blur' }, Validators.required],
-      phone_number: ['', { updateOn: 'blur' }, Validators.required],
-      address: ['', { updateOn: 'blur' }, Validators.required]
-
+      full_name: ['', Validators.compose([
+        Validators.required,
+      ])],
+      email_address: ['', Validators.compose([
+        Validators.required,
+        Validators.maxLength(50),
+        this.validateEmail
+      ])],
+      password: ['', Validators.compose([
+        Validators.required,
+        this.validatePassword
+      ])],
+      confirmPassword: ['', Validators.compose([
+        Validators.required,
+        this.validatePassword
+      ])],
+      phone_number: ['', Validators.compose([
+        Validators.required
+      ])],
+      address: ['', Validators.compose([
+        Validators.required
+      ])]
     });
 
     this.loginForm = this.fb.group({
-      email_address: ['', Validators.required],
-      password: ['', Validators.required]
+      email_address: ['', Validators.compose([
+        Validators.required,
+        Validators.maxLength(50),
+        this.validateEmail
+      ])],
+      password: ['', Validators.compose([
+        Validators.required,
+        this.validatePassword
+      ])]
     });
 
 
