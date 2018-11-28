@@ -50,7 +50,7 @@
                         data-toggle="modal" attr.data-target="#myModal_{{item._id}}">Available</button> -->
 
                     <button type="button" *ngIf="item.isItem_Available" data-toggle="modal" class="btn btn-primary"
-                        (click)="popupItemId=item._id; popupItemImage=item.item_image;popupItemName=item.item_name;popupItemDescription=item.item_description;popupItemCost=item.item_cost;open(content);ShowItemDetails(item._id,'37.402800', '-122.056240')">
+                        (click)="popupItemId=item._id; popupItemImage=item.item_image;popupItemName=item.item_name;popupItemDescription=item.item_description;popupItemCost=item.item_cost;open(content);ShowItemDetails(item._id,item.latitude, item.longitude)">
                         Available</button>
                     <!-- <button type="button" (click)="requestForItem(item._id)" *ngIf="item.isItem_Available" class="btn btn-primary"
                             data-toggle="modal">Available</button> -->

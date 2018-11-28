@@ -212,7 +212,8 @@ export class HomePageComponent implements OnInit, AfterViewInit {
     //  var mapRef=this.mapRouteDirection.nativeElement;
     var chicago = new google.maps.LatLng(this.curLocLat, this.curLncLng);
     var mapOptions = {
-      zoom: 10,
+      zoom: 0,
+      draggable: true,
       center: chicago
     };
     var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
@@ -220,7 +221,7 @@ export class HomePageComponent implements OnInit, AfterViewInit {
     //google.maps.event.addDomListener(document.getElementById('	'), 'click', calcRoute);
 
     // //set current location latitude and logitude
-     var start = new google.maps.LatLng(37.402802, -122.056236);
+     var start = new google.maps.LatLng(this.curLocLat, this.curLncLng);
 
     // //set Item added location latitude and logitude
     // var end = new google.maps.LatLng(itemLng, itemLong);
@@ -228,7 +229,7 @@ export class HomePageComponent implements OnInit, AfterViewInit {
 
     //var start = new google.maps.LatLng(37.355472, -121.997757);
         //var end = new google.maps.LatLng(38.334818, -181.884886);
-        var end = new google.maps.LatLng(38.753769, -93.733749);
+        var end = new google.maps.LatLng(itemLng, itemLong);
 
     var bounds = new google.maps.LatLngBounds();
     bounds.extend(start);
