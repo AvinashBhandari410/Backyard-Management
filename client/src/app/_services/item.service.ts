@@ -32,10 +32,18 @@ export class ItemService {
   constructor(private http: HttpClient) { }
 
   // get all items
-  getAllItems(itemdata: any): Observable<ItemDetails[]> {
-    return this.http.get<ItemDetails[]>(this.dataUrl + "/item/allItems").pipe(
-      catchError(this.handleError('item', itemdata)));
+  // getAllUserItemHistory(itemdata: any): Observable<ItemDetails[]> {
+  //   return this.http.get<ItemDetails[]>(this.dataUrl + "/item/allUserItemHistory").pipe(
+  //     catchError(this.handleError('item', itemdata)));
+  // }
+
+  getAllUserItemHistory(id: string): Observable<ItemDetails[]> {
+    debugger
+    return this.http.get<ItemDetails[]>(this.dataUrl + "/item/allUserItemHistory/" + id,  {}).pipe(
+      catchError(this.handleError('item', {} as ItemDetails[])));
   }
+
+  
 
   getAllHomeItems(itemdata: any): Observable<ItemDetails[]> {
 
@@ -43,8 +51,14 @@ export class ItemService {
   }
 
 
-  getAllUserItems(itemdata: any): Observable<ItemDetails[]> {
+  getAllUserItems(id: string): Observable<ItemDetails[]> {
 
+    return this.http.get<ItemDetails[]>(this.dataUrl + "/item/allItems/" + id,  {}).pipe(
+      catchError(this.handleError('item', {} as ItemDetails[])));
+  }
+
+  // get all items
+  getAllItems(itemdata: any): Observable<ItemDetails[]> {
     return this.http.get<ItemDetails[]>(this.dataUrl + "/item/allItems").pipe(
       catchError(this.handleError('item', itemdata)));
   }

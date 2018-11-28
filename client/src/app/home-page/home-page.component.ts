@@ -259,15 +259,25 @@ export class HomePageComponent implements OnInit, AfterViewInit {
      debugger
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then((result) => {
       debugger
-      // this.closeResult = 'Closed with: ${result}';
+       this.closeResult = 'Closed with: ${result}';
       console.log('save button')
     }, (reason) => {
 
       console.log("Reason:" + reason);
-      this.closeResult = 'Dismissed ${this.getDismissReason(reason)}';
+      this.closeResult = 'Dismissed ${this.getDismissReason('+ reason+ ')}';
 
     });
 } // modal pop up open ends
+
+private getDismissReason(reason: any): string {
+  if (reason === ModalDismissReasons.ESC) {
+    return 'by pressing ESC';
+  } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+    return 'by clicking on a backdrop';
+  } else {
+    return  `with: ${reason}`;
+  }
+}
 
   // isItemIntersted(itemId: string) {
 

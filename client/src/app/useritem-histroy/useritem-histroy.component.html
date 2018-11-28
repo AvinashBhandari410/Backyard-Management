@@ -1,36 +1,55 @@
-
-
 <!------ Include the above in your HEAD tag ---------->
 
-
-    <!-- NAVBAR CODE END -->
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <br />
-                <h2>Bootstrap Collapse Panel With Icon</h2>
-             <h5>   Crafted by <a href="http://www.designbootstrap.com/" target="_blank">DesignBootstrap</a> </h5>
-                <br />
-            </div>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<!-- NAVBAR CODE END -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <br />
+            <h2>Bootstrap Collapse Panel With Icon</h2>
+            <h5> Crafted by <a href="http://www.designbootstrap.com/" target="_blank">DesignBootstrap</a> </h5>
+            <br />
         </div>
-        <div class="row">
-            <div class="col-md-12 col-md-offset-0 col-md-4 col-sm-offset-4">
-                <div class="fancy-collapse-panel">
-                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                        <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="headingOne">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Collapsible Group Item #1
-                                    </a>
-                                </h4>
-                            </div>
-                            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-                                <div class="panel-body">
-                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 
-                                </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-md-offset-0 col-md-4 col-sm-offset-4">
+            <div class="fancy-collapse-panel">
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" *ngFor="let item of items | paginate: { itemsPerPage:5, currentPage: p }">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="heading_{{item._id._id}}">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse_{{item._id._id}}" aria-expanded="true"
+                                attr.aria-controls="collapse_{{item._id._id}}">Item Name: {{item._id.item_name }}
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse_{{item._id._id}}" class="panel-collapse collapse in" role="tabpanel" attr.aria-labelledby="heading_{{item._id._id}}">
+                            <div class="panel-body">
+                                    <div class="table-responsive">
+                                            <table class="table table-striped w-auto">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Full Name</th>
+                                                        <th>Email Address</th>
+                                                        <th>Contact Number</th>
+                                                        <th>Contact Email Address</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody  *ngFor="let interestedItem of item.interestedUsers" class="table-info">
+                                                    <tr>
+                                                        <td>{{interestedItem.interestedfirstname }}</td>
+                                                        <td>{{interestedItem.interesteduseremail }}</td>
+                                                        <td>{{interestedItem.interesteduseraddress }}</td>
+                                                        <td>{{interestedItem.interesteduserphonenumber }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div> 
+                              
                             </div>
                         </div>
-                        <div class="panel panel-default">
+                    </div>
+                    <!-- <div class="panel panel-default">
                             <div class="panel-heading" role="tab" id="headingTwo">
                                 <h4 class="panel-title">
                                     <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Collapsible Group Item #2
@@ -55,10 +74,13 @@
                                     Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid.
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </div> -->
                 </div>
+                <ul class="pagination pull-right">
+                    <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                </ul>
             </div>
         </div>
     </div>
-    <!-- CONATINER END -->
+</div>
+<!-- CONATINER END -->

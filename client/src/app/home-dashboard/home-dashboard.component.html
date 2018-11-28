@@ -1,48 +1,58 @@
-
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand" href="#">{{welcomeUser}}</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-  
-    <div class="collapse navbar-collapse">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
-          <a class="nav-link" [routerLink]="['home']">Home</a>
-        </li>
-        <li class="nav-item" *ngIf="!isUserLogin"  [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
-          <a class="nav-link">SignUp</a>
-        </li>
-      </ul>
+  <a class="navbar-brand" href="#">{{welcomeUser}}</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+    aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
 
-      <ul class="navbar-nav ml-auto">
-          <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
-            <a class="nav-link" *ngIf="!isUserLogin"  [routerLink]="['login']" >Login</a>
-          </li>
-          
-          
-            <li class="nav-item">
-                <a class="nav-link" *ngIf="isUserLogin" (click)="logout()" href="#">Logout</a>
-              </li>
-          <!-- <li *ngIf="isUserLogin"  class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
+  <div class="collapse navbar-collapse">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
+        <a class="nav-link" [routerLink]="['home']">Home</a>
+      </li>
+      <li class="nav-item" *ngIf="!isUserLogin" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
+        <a class="nav-link">SignUp</a>
+      </li>
+
+      <li class="nav-item" *ngIf="isUserLogin" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
+          <!-- <a class="nav-link" routerLink="/addride">Add A Ride</a> -->
+          <a class="nav-link" [routerLink]="['addItem']">Add Item for sale</a>
+        </li>
+        <li class="nav-item" *ngIf="isUserLogin" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
+          <a class="nav-link" [routerLink]="['userItemManagement']" href="#">Item Management</a>
+        </li>
+        <li class="nav-item" *ngIf="isUserLogin" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
+          <a class="nav-link" [routerLink]="['itemRequest']" href="#">Item Request</a>
+        </li>
+  
+    </ul>
+
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
+        <a class="nav-link" *ngIf="!isUserLogin" [routerLink]="['login']">Login</a>
+      </li>
+      <li class="nav-item" *ngIf="isUserLogin">
+        <a class="nav-link" (click)="logout()" href="#">Logout</a>
+      </li>
+      <!-- <li *ngIf="isUserLogin"  class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
             <a class="nav-link" (click)="logout()">Logout</a>
             </li> -->
 
-            
-        </ul>
-      
-      <div class="form-inline my-2 my-lg-0 nav-item">
-        <!-- <ul>
+
+    </ul>
+
+    <div class="form-inline my-2 my-lg-0 nav-item">
+      <!-- <ul>
       <li class="nav-item "> -->
-        
-        
+
+
       <!-- </li> -->
-    <!-- </ul> -->
+      <!-- </ul> -->
     </div>
-    </div>
-  </nav>
-  
-  <!-- <main role="main" class="container mt-2" > -->
-    <router-outlet></router-outlet>
-  
-  <!-- </main>/.container -->
+  </div>
+</nav>
+
+<!-- <main role="main" class="container mt-2" > -->
+<router-outlet></router-outlet>
+
+<!-- </main>/.container -->

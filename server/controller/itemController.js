@@ -34,9 +34,9 @@ router.post('/', function (req, res) {
 })
 
 //return all the user in the database starts
-router.get('/allItems', function (req, res) {
+router.get('/allItems/:id/', function (req, res) {
     item.
-        find({}).sort({ 'item_date': -1 }).
+        find({userId: mongoose.Types.ObjectId(req.params.id) }).sort({ 'item_date': -1 }).
         populate({ path: 'userId', select: 'full_name' }).
         exec(function (err, items) {
             if (err)
@@ -48,15 +48,24 @@ router.get('/allItems', function (req, res) {
 }); // ends
 
 
+//return all the user in the database starts
+router.get('/allUserItemHistory/:userid', function (req, res) {
+    //  res.status(200).send(req);
+
+    _getUserItemHistory(req.params.userid).exec(function (err, values) {
+        if (err)
+            return res.status(500).send(err);
+        console.log(values)
+        res.status(200).send(values)
+    })
+
+}); // ends
+
+
 
 //return all the user in the database starts
 router.get('/allHomeItems', function (req, res) {
     item.aggregate([
-        // {
-        //     $match: {
-        //         iteminterests.userId: 
-        //     }
-        // },
         {
             $lookup:
             {
@@ -66,6 +75,37 @@ router.get('/allHomeItems', function (req, res) {
                 as: "item_interested"
             }
         }
+        // {
+        //     $match: {
+        //         "item_interested.userId": "5bed32c16c28001b40affdcd"
+        //     }
+        // }
+
+
+
+        // {
+        //     $lookup:
+        //     {
+        //         from: "iteminterests",
+        //         localField: "_id",
+        //         foreignField: "itemId",
+        //         as: "item_interested"
+        //     }
+        // },
+        // {
+        //     $unwind: { path: "$item_interested"} // ,preserveNullAndEmptyArrays: true
+        // },
+        // {
+        //     $lookup:
+        //     {
+        //         from: "users",
+        //         localField: "item_interested.userId",
+        //         foreignField: "itemId",
+        //         as: "item_interested1"
+        //     }
+        // }
+        
+
     ], function (err, result) {
         if (err) {
             return res.status(500).send("There was a problem adding the information to the database.");
@@ -89,80 +129,6 @@ router.get('/allHomeItems', function (req, res) {
 
 
 
-//return all the user in the database starts
-router.get('/allUserItemHistory', function (req, res) {
-    item.aggregate([
-        // define some conditions here 
-        // {
-        //     $match: {
-        //         $and: [{ "userId": mongoose.Types.ObjectId("5bea2322564eca53bcc76b72") }]
-        //         //$and: [{ "userId": mongoose.Types.ObjectId(localStorage.getItem('currentUser')) }]
-        //     }
-        // },
-
-        {
-            $lookup:
-            {
-                from: "iteminterests",
-                localField: "_id",
-                foreignField: "itemId",
-                as: "iteminterestsDetails"
-            }
-        }, // item interest lookup ends
-        {
-            
-            $unwind: { path: "$iteminterestsDetails"} // ,preserveNullAndEmptyArrays: true
-           
-       },
-        
-        {
-            $lookup:
-            {
-                from: "users",       // other table name
-                localField: "iteminterestsDetails.userId",   // name of users table field
-                foreignField: "_id", // name of userinfo table field
-                as: "user_info"         // alias for userinfo table
-            }
-        },
-        {
-         $unwind:{ path: "$user_info"} //,preserveNullAndEmptyArrays: true
-        }, 
-        {
-            $project: { // what you want to manipulate before aggregation
-                _id: 1, //id 
-                item_name: 1,
-                interestedUsers: {
-                    interesteduserID: '$iteminterestsDetails.userId',
-                    interestedusername: '$user_info.full_name', 
-                    interesteduseremail: '$user_info.email_address', 
-                    interesteduseraddress: '$user_info.address'
-                }
-
-           }
-        },
-        {
-            $group: {
-                _id: {
-                    _id: '$_id',
-                    item_name:'$item_name'
-                },
-                interestedUsers:{$push:'$interestedUsers'}
-                // interestedusers: "$interestedusers",
-                // interesteduserdetails: "$interesteduserdetails"
-            }
-        }
-
-      //  { $project : { items: "items", full_name : "$user_info1.full_name" , email_address : "$user_info1.email_address" } }
-
-
-    ], function (err, result) {
-        if (err) {
-            return res.status(500).send(err);
-        }
-        res.status(200).send(result);
-    });
-}); // ends
-
 
 //return all the user in the database starts
 router.get('/allUserItems', function (req, res) {
@@ -176,47 +142,6 @@ router.get('/allUserItems', function (req, res) {
             res.status(200).send(items);
 
         });
-}); // ends
-
-router.get('/allUserItemHistory', function (req, res) {
-    //Aggregation function
-
-
-    item.aggregate([
-        //  { $match: {
-        //      _id: accountId
-        //  }},
-        { $unwind: "$users" },
-
-        {
-            $group: {
-                _id: "$_id",
-                full_name: "$users.full_name",
-                email_address: "$users.email_address",
-                phone_number: "$users.phone_number",
-                address: "$users.address"
-            }
-        }
-    ], function (err, result) {
-        if (err) {
-            return res.status(500).send("There was a problem adding the information to the database.");
-            //console.log(err);
-        }
-        res.status(200).send(result);
-        //console.log(result);
-    });
-
-    // itemInterest.
-    // find({'userId': mongoose.Types.ObjectId(localStorage.getItem('currentUser'))}).sort({ 'item_date': -1 })
-    //     .populate('userId', ['full_name', 'email_address','phone_number','address'])
-    //     ///populate({ path: 'itemId', select: 'full_name' }).
-    //     exec(function (err, items) {
-    //         if (err)
-    //             return res.status(500).send("There was a problem adding the information to the database.");
-    //        // console.log("Items from Server:" + items)
-    //         res.status(200).send(items);
-
-    //     });
 }); // ends
 
 // save ride starts
@@ -304,27 +229,112 @@ router.put('/updateUserItemInterest', function (req, res) {
 
 
 
-router.put('/updateUserItemInterest', function (req, res) {
-    itemInterest.findByIdAndUpdate(mongoose.Types.ObjectId(req.body._id), req.body, { new: true }, function (err, post) {
-        console.log("Current Item Which we updated: " + req.body.isItemInterested)
+// router.put('/updateUserItemInterest', function (req, res) {
+//     itemInterest.findByIdAndUpdate(mongoose.Types.ObjectId(req.body._id), req.body, { new: true }, function (err, post) {
+//         console.log("Current Item Which we updated: " + req.body.isItemInterested)
+//         if (err)
+//             return res.status(500).send("There was a problem adding the information to the database.");
+//         res.status(200).send(post);
+//     });
+// });
+
+
+
+
+//return all the user in the database starts
+router.get('/allUserItemHistory/:userid', function (req, res) {
+    //  res.status(200).send(req);
+
+    _getUserItemHistory(req.params.userid).exec(function (err, values) {
         if (err)
-            return res.status(500).send("There was a problem adding the information to the database.");
-        res.status(200).send(post);
-    });
-});
+            return res.status(500).send(err);
+        console.log(values)
+        res.status(200).send(values)
+    })
+
+}); // ends
 
 
-/* DELETE BOOK */
-router.delete('/deleteUserItemInterest/:id', function (req, res) {
-    res.status(200).send(req);
-    itemInterest.findByIdAndDelete(req.body.id, req.body, function (err, post) {
-        if (err)
-            return res.status(500).send("There was a problem adding the information to the database.");
-        res.status(200).send("ID: " + req.body._id);
-    });
-});
+function _getUserItemHistory(userid) {
+    let queryParams = {}
+        queryParams = {
+            'userId': {
+                $eq: mongoose.Types.ObjectId(userid)
+            }
+        }
 
+    return item.aggregate([
+        // define some conditions here 
+        {
+            $match: queryParams
+            // $match: {
+            //     //$and: [{ "userId": mongoose.Types.ObjectId("5bea2322564eca53bcc76b72") }]
+            //     $and: [{ "userId": mongoose.Types.ObjectId(req.body.id) }]
+            // }
+        },
+        {
+            $lookup:
+            {
+                from: "iteminterests",
+                localField: "_id",
+                foreignField: "itemId",
+                as: "iteminterestsDetails"
+            }
+        }, // item interest lookup ends
+        {
+            
+            $unwind: { path: "$iteminterestsDetails"} // ,preserveNullAndEmptyArrays: true
+           
+       },
+        
+        {
+            $lookup:
+            {
+                from: "users",       // other table name
+                localField: "iteminterestsDetails.userId",   // name of users table field
+                foreignField: "_id", // name of userinfo table field
+                as: "user_info"         // alias for userinfo table
+            }
+        },
+        {
+         $unwind:{ path: "$user_info"} //,preserveNullAndEmptyArrays: true
+        }, 
+        {
+            $project: { // what you want to manipulate before aggregation
+                _id: 1, //id 
+                item_name: 1,
+                interestedUsers: {
+                    interesteduserID: '$iteminterestsDetails.userId',
+                    interestedfirstname: '$user_info.full_name', 
+                    interesteduseremail: '$user_info.email_address', 
+                    interesteduseraddress: '$user_info.address',
+                    interesteduserphonenumber: '$user_info.phone_number'
+                }
 
+           }
+        },
+        {
+            $group: {
+                _id: {
+                    _id: '$_id',
+                    item_name:'$item_name'
+                },
+                interestedUsers:{$push:'$interestedUsers'}
+                // interestedusers: "$interestedusers",
+                // interesteduserdetails: "$interesteduserdetails"
+            }
+        }
+
+      //  { $project : { items: "items", full_name : "$user_info1.full_name" , email_address : "$user_info1.email_address" } }
+
+    ])
+    // ]), function (err, result) {
+    //     if (err) {
+    //         return res.status(500).send(err);
+    //     }
+    //     res.status(200).send(result);
+    // });
+}
 // cancel ride
 router.get('/deleteUserItemInterest/:itemInterestId/', function (req, res) {
     itemInterest.

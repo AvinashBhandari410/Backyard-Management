@@ -100,7 +100,9 @@
 <!-- modal pop up starts :: booking -->
 <ng-template #content let-modal>
     <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">Item Details</h4>
+        <h4 class="modal-title" id="modal-basic-title">
+                <label title="{{popupItemName}}">{{popupItemName.substring(0,63)}}</label>
+        </h4>
         <!-- <a href="#" data-dismiss="modal" class="pull-right" style="margin-left: -170px"><span class="glyphicon glyphicon-remove"></span></a> -->
         <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
@@ -109,11 +111,13 @@
     <div class="modal-body">
         <div class="row">
             <div class="col-md-6 product_img">
-                <img src="{{popupItemImage}}" class="img-responsive">
+                <img src="{{popupItemImage}}"  width="100%" height="40%" class="img-responsive">
+                <pre></pre>
+                <pre>Pickup Location</pre>
                 <div id="map-canvas" width="40%" height="20%"></div>
             </div>
             <div class="col-md-6 product_content">
-                <h4>Item Name: <span>{{popupItemName}} </span></h4>
+                <!-- <h4>Item Name: <span>{{popupItemName}} </span></h4> -->
                 <label title="{{popupItemDescription}}">{{popupItemDescription.substring(0,200)}}</label>
                 <h3 class="cost"><span class="glyphicon"></span>{{popupItemCost | currency:'USD'}}</h3>
                 <div class="space-ten"></div>

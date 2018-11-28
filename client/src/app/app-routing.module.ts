@@ -38,6 +38,9 @@ const routes: Routes = [
 { path: 'homepage', component: HomeDashboardComponent,  children: [
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomePageComponent}, //landing page
+  {path: 'addItem', component: AddItemComponent},
+  {path: 'userItemManagement', component: UserItemManagementComponent},
+  {path: 'itemRequest', component: UseritemHistroyComponent},
   {path: '', component: HomePageComponent}] }
 ]
 
