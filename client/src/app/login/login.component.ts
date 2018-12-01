@@ -64,23 +64,27 @@ export class LoginComponent implements OnInit {
         debugger
         if (userdata) {
 
-          let mailContent = {
-            from_email_address: "avinash.bhandari24@gmail.com",
-            to_email_address: "avinash.bhandari@augustconsulting.net",
+          var mailContent = {
+            from: "avinash.bhandari24@gmail.com",
+            to: userdata.email_address,
             subject: "Backyard Management: New item approval request",
-            mailbody: "Hello Admin, <br/> Please approve below item request User fullname: " + userdata.full_name + "<br/> Email Address: " + userdata.email_address + "Please click here for approval" + "localhost:4200/login"
+            text: "Hello Admin, <br/> Please approve below item request User fullname: " + userdata.full_name + "<br/> Email Address: " + userdata.email_address + "Please click here for approval" + "localhost:4200/login"
+            //text: "test mail"
           }
-          this.itemService.sendMail(mailContent);
-          debugger
-          this.signedUp = true
-          this.loginshow = true
-        }
-        else {
-          // pop up something went wrong.
-        }
+          this.itemService.sendMail(mailContent).subscribe(userdata => {
+            // debugger
+            // this.signedUp = true
+            // this.loginshow = true
+            console.log('response from email', userdata);
 
+          },
+            err => {
+              console.log(err);
+            }
+          );
+        };
       }, err => {
-        console.log('Something went wrong!');
+        console.log(err);
       }
       );
   } //signUp ends

@@ -1,98 +1,55 @@
+var express = require('express');
+var router = express.Router();
+var bodyParser = require('body-parser');
+var nodemailer = require('nodemailer');
 
-
-
-
-
-var express= require('express');
-var router=express.Router();
-var bodyParser=require('body-parser');
-var helper = require('sendgrid').mail;
-const async = require('async');
-var mongoose = require('mongoose');
-router.use(bodyParser.urlencoded({extended:true}));
+router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
-function sendEmail(
-    parentCallback,
-    fromEmail,
-    toEmails,
-    subject,
-    textContent,
-    htmlContent
-  ) {
-    const errorEmails = [];
-    const successfulEmails = [];
+// creating new user
+router.post('/sendMail', function (req, res) {
 
-const sg = require('sendgrid')('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');
+  // req.files is array of `photos` files
+  // req.body will contain the text fields, if there were any ex :: req.body.itemname
+  console.log("From Email: " + req.body.from);
+  console.log("To Email: " + req.body.to);
+  console.log("Subject Email: " + req.body.subject);
+  console.log("Text Email: " + req.body.text);
+  
+  var mailOptions = {
+      from: req.body.from,
+      to: req.body.to,
+      subject: req.body.subject,
+      text: req.body.text
+    };
+  transporter.sendMail(mailOptions, function (err, info) {
+      if (err)
+          return res.status(500).send("There was a problem adding the information to the database.");
+      res.status(200).send(info);
+      // if (error) {
+      //     //alert("Email error: " + error);
+      //     //console.log("Email error: " + error);
+      //     res.status(500).send("error");
+      // } else {
+      //     //alert("Email success: " + error);
+      //     res.status(200).send("success");
+      //     //console.log('Email sent: ' + info.response);
+      // }
+  }, function (err, user) {
+      if (err)
+          return res.status(500).send("There was a problem adding the information to the database.");
+      res.status(200).send(user);
+  });
+});
 
-async.parallel([
-      function(callback) {
-        // Add to emails
-        for (let i = 0; i < toEmails.length; i += 1) {
-          // Add from emails
-          const senderEmail = new helper.Email(fromEmail);
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'avinash.bhandari24@gmail.com',
+    pass: 'avi@aasaanhai'
+  }
+});
 
-          // Add to email
-          const toEmail = new helper.Email(toEmails[i]);
 
-          // HTML Content
-          const content = new helper.Content('text/html', htmlContent);
 
-          const mail = new helper.Mail(senderEmail, subject, toEmail, content);
-
-          var request = sg.emptyRequest({
-            method: 'POST',
-            path: '/v3/mail/send',
-            body: mail.toJSON()
-          });
-
-          sg.API(request, function (error, response) {
-            console.log('SendGrid');
-            if (error) {
-              console.log('Error response received');
-            }
-            console.log(response.statusCode);
-            console.log(response.body);
-            console.log(response.headers);
-          });
-        }
-
-        // return
-        callback(null, true);
-      }
-    ], function(err, results) {
-      console.log('Done');
-    });
-
-    parentCallback(null,
-      {
-        successfulEmails: successfulEmails,
-        errorEmails: errorEmails,
-      }
-    );
-}
-
-router.post('/sendmail', function (req, res, next) {
-    async.parallel([
-      function (callback) {
-        sendEmail(
-          callback,
-          req.body.from_email_address,
-          [req.body.to_email_address],
-          req.body.subject,
-          req.body.mailbody,
-          '<p style="font-size: 32px;">HTML Content</p>'
-        );
-      }
-    ], function(err, results) {
-      res.send({
-        success: true,
-        message: 'Emails sent',
-        successfulEmails: results[0].successfulEmails,
-        errorEmails: results[0].errorEmails,
-      });
-    });
-
- });
-
- module.exports=router;
+module.exports = router;

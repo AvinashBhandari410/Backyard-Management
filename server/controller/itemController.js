@@ -7,7 +7,7 @@ var mongoose = require('mongoose');
 var item = require('../model/item');
 var itemInterest = require('../model/itemInterest');
 const multer = require('multer');
-
+var mailController = require('../controller/mailController');
 
 //Get reference for select multiple columns from multiple tables joins
 //https://scotch.io/@ossaijad/how-to-do-join-operations-and-create-links-between-mongodb-collection
@@ -34,9 +34,9 @@ router.post('/', function (req, res) {
 })
 
 //return all the user in the database starts
-router.get('/allItems/:id/', function (req, res) {
+router.get('/allItems/', function (req, res) {
     item.
-        find({userId: mongoose.Types.ObjectId(req.params.id) }).sort({ 'item_date': -1 }).
+        find().sort({ 'item_date': -1 }).
         populate({ path: 'userId', select: 'full_name' }).
         exec(function (err, items) {
             if (err)
@@ -61,10 +61,8 @@ router.get('/allUserItemHistory/:userid', function (req, res) {
 
 }); // ends
 
-
-
 //return all the user in the database starts
-router.get('/allHomeItems', function (req, res) {
+router.get('/allLogInUserHomeItems/:userid', function (req, res) {
     item.aggregate([
         {
             $lookup:
@@ -74,66 +72,207 @@ router.get('/allHomeItems', function (req, res) {
                 foreignField: "itemId",
                 as: "item_interested"
             }
+        },
+        {
+            $match: {
+                //$and: [{ "userId": mongoose.Types.ObjectId("5bea2322564eca53bcc76b72") }]
+                $and: [{ "isItem_Approved": true }]
+            }
+        },
+        {
+            $unwind: { path: '$item_interested', preserveNullAndEmptyArrays: true }
+        },
+        {
+            $unwind: { path: '$item_interested.userId', preserveNullAndEmptyArrays: true }
+        },
+        {
+            $unwind: { path: '$item_interested.itemId', preserveNullAndEmptyArrays: true }
+        },
+        {
+            $project:
+            {
+                itemId: '$_id',
+                item_name: '$item_name',
+                item_number: '$item_number',
+                item_image: '$item_image',
+                item_cost: '$item_cost',
+                item_Location: '$item_Location',
+                item_date: '$item_date',
+                isItem_Available: '$isItem_Available',
+                latitude: '$latitude',
+                longitude: '$longitude',
+                item_description: '$item_description',
+                // here to project whatever is needed.
+                itemInterestedId: '$item_interested._id',
+                interestedUserId: '$item_interested.userId'
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    itemId: '$itemId',
+                    item_name: '$item_name',
+                    item_number: '$item_number',
+                    item_image: '$item_image',
+                    item_cost: '$item_cost',
+                    item_Location: '$item_Location',
+                    item_date: '$item_date',
+                    isItem_Available: '$isItem_Available',
+                    item_description: '$item_description',
+                    latitude: '$latitude',
+                    longitude: '$longitude'
+                    //and here to take them in aggregation.
+                },
+                interestedUserId: { $push: '$interestedUserId' },
+                itemInterestedId: { $push: '$itemInterestedId' }
+            }
+        },
+        {
+            $project:
+            {
+                _id: '$_id',
+                "userInterested": {
+                    $in: [mongoose.Types.ObjectId(req.params.userid), "$interestedUserId"]
+                    //$in: [mongoose.Types.ObjectId(localStorage.getItem('currentUser')), "$interestedUserId"]
+                },
+                interestedUserId: '$interestedUserId',
+                itemInterestedId: '$itemInterestedId'
+            }
+        },
+        {
+            $project:
+            {
+                _id: '$_id',
+                userInterested: '$userInterested',
+                index: { $indexOfArray: ["$interestedUserId", mongoose.Types.ObjectId(req.params.userid)] },
+                interestedUserId: '$interestedUserId',
+                itemInterestedId: '$itemInterestedId'
+            }
+        },
+        {
+            $project:
+            {
+                _id: '$_id',
+                userInterested: '$userInterested',
+                itemInterestedId: { $arrayElemAt: ['$itemInterestedId', '$index'] }
+            }
         }
-        // {
-        //     $match: {
-        //         "item_interested.userId": "5bed32c16c28001b40affdcd"
-        //     }
-        // }
-
-
-
-        // {
-        //     $lookup:
-        //     {
-        //         from: "iteminterests",
-        //         localField: "_id",
-        //         foreignField: "itemId",
-        //         as: "item_interested"
-        //     }
-        // },
-        // {
-        //     $unwind: { path: "$item_interested"} // ,preserveNullAndEmptyArrays: true
-        // },
-        // {
-        //     $lookup:
-        //     {
-        //         from: "users",
-        //         localField: "item_interested.userId",
-        //         foreignField: "itemId",
-        //         as: "item_interested1"
-        //     }
-        // }
-        
-
     ], function (err, result) {
         if (err) {
-            return res.status(500).send("There was a problem adding the information to the database.");
-            //console.log(err);
+            return res.status(500).send(err);
         }
         res.status(200).send(result);
-        //console.log(result);
     });
-    // item.find({'isItem_Approved': true}).sort({ 'item_date': -1 })
-    //     .populate('userId', ['full_name', 'address'])
-    //     //.populate('itemId', ['isItemInterested'])
-    //     //populate({ path: 'userId', select: 'full_name', select: 'full_name'}).
-    //     .exec(function (err, items) {
-    //         if (err)
-    //             return res.status(500).send("There was a problem adding the information to the database.");
-    //         console.log("Items from Server:" + items)
-    //         res.status(200).send(items);
-
-    //     });
 }); // ends
 
-
-
+//return all the user in the database starts
+router.get('/allHomeItems/', function (req, res) {
+    item.aggregate([
+        {
+            $lookup:
+            {
+                from: "iteminterests",
+                localField: "_id",
+                foreignField: "itemId",
+                as: "item_interested"
+            }
+        },
+        {
+            $match: {
+                //$and: [{ "userId": mongoose.Types.ObjectId("5bea2322564eca53bcc76b72") }]
+                $and: [{ "isItem_Approved": true }]
+            }
+        },
+        {
+            $unwind: { path: '$item_interested', preserveNullAndEmptyArrays: true }
+        },
+        {
+            $unwind: { path: '$item_interested.userId', preserveNullAndEmptyArrays: true }
+        },
+        {
+            $unwind: { path: '$item_interested.itemId', preserveNullAndEmptyArrays: true }
+        },
+        {
+            $project:
+            {
+                itemId: '$_id',
+                item_name: '$item_name',
+                item_number: '$item_number',
+                item_image: '$item_image',
+                item_cost: '$item_cost',
+                item_Location: '$item_Location',
+                item_date: '$item_date',
+                isItem_Available: '$isItem_Available',
+                latitude: '$latitude',
+                longitude: '$longitude',
+                item_description: '$item_description',
+                // here to project whatever is needed.
+                itemInterestedId: '$item_interested._id',
+                interestedUserId: '$item_interested.userId'
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    itemId: '$itemId',
+                    item_name: '$item_name',
+                    item_number: '$item_number',
+                    item_image: '$item_image',
+                    item_cost: '$item_cost',
+                    item_Location: '$item_Location',
+                    item_date: '$item_date',
+                    isItem_Available: '$isItem_Available',
+                    item_description: '$item_description',
+                    latitude: '$latitude',
+                    longitude: '$longitude'
+                    //and here to take them in aggregation.
+                },
+                interestedUserId: { $push: '$interestedUserId' },
+                itemInterestedId: { $push: '$itemInterestedId' }
+            }
+        },
+        {
+            $project:
+            {
+                _id: '$_id',
+                // "userInterested": {
+                //     $in: [mongoose.Types.ObjectId(req.params.userid), "$interestedUserId"]
+                //     //$in: [mongoose.Types.ObjectId(localStorage.getItem('currentUser')), "$interestedUserId"]
+                // },
+                interestedUserId: '$interestedUserId',
+                itemInterestedId: '$itemInterestedId'
+            }
+        },
+        {
+            $project:
+            {
+                _id: '$_id',
+                userInterested: '$userInterested',
+                //   index: { $indexOfArray: ["$interestedUserId", mongoose.Types.ObjectId(req.params.userid)] },
+                interestedUserId: '$interestedUserId',
+                itemInterestedId: '$itemInterestedId'
+            }
+        },
+        {
+            $project:
+            {
+                _id: '$_id',
+                userInterested: '$userInterested',
+                itemInterestedId: { $arrayElemAt: ['$itemInterestedId', '$index'] }
+            }
+        }
+    ], function (err, result) {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        res.status(200).send(result);
+    });
+}); // ends
 
 //return all the user in the database starts
-router.get('/allUserItems', function (req, res) {
+router.get('/allUserItems/:id', function (req, res) {
     item.
-        find({ 'userId': mongoose.Types.ObjectId(localStorage.getItem('currentUser')) }).sort({ 'item_date': -1 }).
+        find({ 'userId': mongoose.Types.ObjectId(req.params.id) }).sort({ 'item_date': -1 }).
         populate({ path: 'userId', select: 'full_name' }).
         exec(function (err, items) {
             if (err)
@@ -190,6 +329,36 @@ router.put('/updateItemStatus', function (req, res) {
         res.status(200).send(post);
     });
 });
+
+router.put('/updateAllItemStatus', function (req, res) {
+    // item.find({}, req.body, { new: true }), function (err, post) {
+    //     console.log("Current Item Which we updated: " + req.body.is_useractive)
+    //     if (err)
+    //         return res.status(500).send("There was a problem adding the information to the database.");
+    //     res.status(200).send(post);
+    // }
+
+    console.log("Current Item Which we updated: " + req.body.isItem_Approved)
+    item.update({}, {
+
+        $set: {
+            "isItem_Approved": req.body.isItem_Approved,
+        }
+    }, { multi: true }, function (err, values) {
+        if (err) {
+            console.log("error on UPDATING");
+            return res.status(500).send("error");
+        }
+        else {
+            console.log("success on UPDATING");
+            res.status(200).send("success");
+        }
+    }
+    );
+});
+
+
+
 
 router.put('/updateItemAvailablity', function (req, res) {
     item.findByIdAndUpdate(mongoose.Types.ObjectId(req.body._id), req.body, { new: true }, function (err, post) {
@@ -257,11 +426,11 @@ router.get('/allUserItemHistory/:userid', function (req, res) {
 
 function _getUserItemHistory(userid) {
     let queryParams = {}
-        queryParams = {
-            'userId': {
-                $eq: mongoose.Types.ObjectId(userid)
-            }
+    queryParams = {
+        'userId': {
+            $eq: mongoose.Types.ObjectId(userid)
         }
+    }
 
     return item.aggregate([
         // define some conditions here 
@@ -282,11 +451,11 @@ function _getUserItemHistory(userid) {
             }
         }, // item interest lookup ends
         {
-            
-            $unwind: { path: "$iteminterestsDetails"} // ,preserveNullAndEmptyArrays: true
-           
-       },
-        
+
+            $unwind: { path: "$iteminterestsDetails" } // ,preserveNullAndEmptyArrays: true
+
+        },
+
         {
             $lookup:
             {
@@ -297,35 +466,53 @@ function _getUserItemHistory(userid) {
             }
         },
         {
-         $unwind:{ path: "$user_info"} //,preserveNullAndEmptyArrays: true
-        }, 
+            $unwind: { path: "$user_info" } //,preserveNullAndEmptyArrays: true
+        },
         {
             $project: { // what you want to manipulate before aggregation
                 _id: 1, //id 
-                item_name: 1,
+                item_name: '$item_name',
+                item_number: '$item_number',
+                item_image: '$item_image',
+                item_cost: '$item_cost',
+                item_Location: '$item_Location',
+                item_date: '$item_date',
+                isItem_Available: '$isItem_Available',
+                latitude: '$latitude',
+                longitude: '$longitude',
+                item_description: '$item_description',
                 interestedUsers: {
                     interesteduserID: '$iteminterestsDetails.userId',
-                    interestedfirstname: '$user_info.full_name', 
-                    interesteduseremail: '$user_info.email_address', 
+                    interestedfirstname: '$user_info.full_name',
+                    interesteduseremail: '$user_info.email_address',
                     interesteduseraddress: '$user_info.address',
                     interesteduserphonenumber: '$user_info.phone_number'
                 }
 
-           }
+            }
         },
         {
             $group: {
                 _id: {
                     _id: '$_id',
-                    item_name:'$item_name'
+                    item_name: '$item_name',
+                    item_number: '$item_number',
+                    item_image: '$item_image',
+                    item_cost: '$item_cost',
+                    item_Location: '$item_Location',
+                    item_date: '$item_date',
+                    isItem_Available: '$isItem_Available',
+                    latitude: '$latitude',
+                    longitude: '$longitude',
+                    item_description: '$item_description'
                 },
-                interestedUsers:{$push:'$interestedUsers'}
+                interestedUsers: { $push: '$interestedUsers' }
                 // interestedusers: "$interestedusers",
                 // interesteduserdetails: "$interesteduserdetails"
             }
         }
 
-      //  { $project : { items: "items", full_name : "$user_info1.full_name" , email_address : "$user_info1.email_address" } }
+        //  { $project : { items: "items", full_name : "$user_info1.full_name" , email_address : "$user_info1.email_address" } }
 
     ])
     // ]), function (err, result) {

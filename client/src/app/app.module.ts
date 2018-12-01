@@ -21,6 +21,10 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { GoogleMapsComponent } from './google-maps/google-maps.component';
 import { AgmCoreModule } from '@agm/core';
 import { UseritemHistroyComponent } from './useritem-histroy/useritem-histroy.component';
+//import { NgxImageZoomModule } from 'ngx-image-zoom';
+// Import the library
+import { NgxImgZoomModule } from 'ngx-img-zoom';
+import { ItemRequestComponent } from './item-request/item-request.component';
 // import {NgbDateCustomParserFormatter} from './shared/dateFormat'
 // import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 
@@ -40,7 +44,8 @@ import { UseritemHistroyComponent } from './useritem-histroy/useritem-histroy.co
      HomeDashboardComponent,
      HomePageComponent,
      GoogleMapsComponent,
-     UseritemHistroyComponent
+     UseritemHistroyComponent,
+     ItemRequestComponent
   ],
   imports: [
     AgmCoreModule.forRoot({
@@ -53,7 +58,8 @@ import { UseritemHistroyComponent } from './useritem-histroy/useritem-histroy.co
     ReactiveFormsModule,
     FormsModule,
     NgbModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    NgxImgZoomModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -10,11 +10,11 @@ import { Item, ItemDetails } from '../_models/item.model';
   styleUrls: ['./item-mangement.component.css']
 })
 export class ItemMangementComponent implements OnInit {
-  
+
   items: ItemDetails[]
   isodd = false;
 
-  public get changeOdd(){
+  public get changeOdd() {
     this.isodd = !this.isodd;
     return true;
   }
@@ -23,15 +23,15 @@ export class ItemMangementComponent implements OnInit {
     private router: Router, private fb: FormBuilder) { }
 
   ngOnInit() {
-    this.itemBind();  
+    this.itemBind();
   }
 
-  itemBind() 
-  {
+  itemBind() {
     // getting all rides and fill
     this.itemService.getAllItems(localStorage.getItem('currentUser'))
       .subscribe(itemdata => {
         if (itemdata) {
+          //debugger
           this.items = itemdata
         }
       }, err => {
@@ -51,7 +51,22 @@ export class ItemMangementComponent implements OnInit {
       }
       );
   }
+
+  updateAllItemStatus(currentStatus: boolean): void {
+    this.itemService.updateAllItemStatus(currentStatus)
+      .subscribe(itemdata => {
+        if (itemdata) {
+          //          debugger
+          this.itemBind();
+        }
+      }, (err) => {
+        console.log(err);
+      }
+      );
+  }
 }
+
+
 
 
 @Pipe({ name: 'evenodd' })

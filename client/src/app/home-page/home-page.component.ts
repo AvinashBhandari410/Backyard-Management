@@ -8,6 +8,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { ScriptService } from '../shared/script.service'
 import { forEach } from '@angular/router/src/utils/collection';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { ImageZoomModule } from 'angular2-image-zoom';
 
 @Component({
   selector: 'app-home-page',
@@ -19,7 +20,7 @@ export class HomePageComponent implements OnInit, AfterViewInit {
   items: ItemDetails[]
   isodd = false;
   isUserLogin: boolean = false;
-  loggedInUserId: string="";
+  loggedInUserId: string = "";
   curLocLat: number;
   curLncLng: number;
   closeResult: string;
@@ -31,6 +32,7 @@ export class HomePageComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    debugger
     // this.scriptloader.load('googlemaps').then(data => {
     //   var directionsService = new google.maps.DirectionsService();
     //   var directionsDisplay = new google.maps.DirectionsRenderer();
@@ -70,14 +72,16 @@ export class HomePageComponent implements OnInit, AfterViewInit {
 
     // debugger;
     this.scriptloader.load('googlemaps').then(data => {
+      debugger
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
           var pos = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           };
-          this.curLocLat=pos.lat;
-          this.curLncLng=pos.lng;
+          debugger
+          this.curLocLat = pos.lat;
+          this.curLncLng = pos.lng;
           // var google_map_pos = new google.maps.LatLng( pos.lat, pos.lng );
 
           //  /* Use Geocoder to get address */
@@ -99,23 +103,25 @@ export class HomePageComponent implements OnInit, AfterViewInit {
     }).catch(error => console.log(error));
   }
   constructor(private itemService: ItemService, private route: ActivatedRoute,
-    private router: Router, private fb: FormBuilder, private scriptloader: ScriptService,private modalService: NgbModal) { }
+    private router: Router, private fb: FormBuilder, private scriptloader: ScriptService, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.itemBind();
-    if(localStorage.getItem('currentUser')!=null && localStorage.getItem('currentUser')!='')
-    {
-      this.isUserLogin=true;
+    if (localStorage.getItem('currentUser') != null && localStorage.getItem('currentUser') != '') {
+      this.isUserLogin = true;
       this.loggedInUserId = localStorage.getItem('currentUser');
     }
   }
 
+
   itemBind() {
-    // getting all rides and fill
+
+    if (localStorage.getItem("currentUser") === null) {
+       // getting all items and fill
     this.itemService.getAllHomeItems(this.items)
       .subscribe(itemdata => {
         if (itemdata) {
-        //  debugger
+          debugger
           this.items = itemdata
           console.log("All homes items: " + this.items);
         }
@@ -123,6 +129,21 @@ export class HomePageComponent implements OnInit, AfterViewInit {
         console.log('Something went wrong!');
       }
       );  //saveItem ends
+    }
+    else {
+      // getting all rides and fill
+      this.itemService.getAllLogInUserHomeItems(localStorage.getItem('currentUser'))
+        .subscribe(itemdata => {
+          if (itemdata) {
+            //  debugger
+            this.items = itemdata
+            console.log("All home items for loggin users: " + this.items);
+          }
+        }, err => {
+          console.log('Something went wrong!');
+        }
+        );  //saveItem ends
+    }
   }
 
   updateUserItemInterest(itemInterestId: string, isUserInterested: boolean) {
@@ -145,10 +166,10 @@ export class HomePageComponent implements OnInit, AfterViewInit {
   }
 
   deleteUserItemInterest(itemInterestId: string) {
-
+    debugger
     this.itemService.deleteUserItemInterest(itemInterestId)
       .subscribe(itemData => {
-      //  debugger
+        //  debugger
         if (itemData != null) {
           this.itemBind();
         }
@@ -163,11 +184,11 @@ export class HomePageComponent implements OnInit, AfterViewInit {
       );
   }
 
-  
+
 
 
   addUserItemInterest(itemId: string, isUserInterested: boolean) {
-
+    debugger
     this.itemService.addUserItemInterest(itemId, isUserInterested)
       .subscribe(itemData => {
         //debugger
@@ -205,8 +226,8 @@ export class HomePageComponent implements OnInit, AfterViewInit {
       );
   }
 
-  ShowItemDetails(itemID,itemLng, itemLong) {
-     debugger;
+  ShowItemDetails(itemID, itemLng, itemLong) {
+    debugger;
     var directionsService = new google.maps.DirectionsService();
     var directionsDisplay = new google.maps.DirectionsRenderer();
     //  var mapRef=this.mapRouteDirection.nativeElement;
@@ -221,15 +242,15 @@ export class HomePageComponent implements OnInit, AfterViewInit {
     //google.maps.event.addDomListener(document.getElementById('	'), 'click', calcRoute);
 
     // //set current location latitude and logitude
-     var start = new google.maps.LatLng(this.curLocLat, this.curLncLng);
+    var start = new google.maps.LatLng(this.curLocLat, this.curLncLng);
 
     // //set Item added location latitude and logitude
     // var end = new google.maps.LatLng(itemLng, itemLong);
-    
+
 
     //var start = new google.maps.LatLng(37.355472, -121.997757);
-        //var end = new google.maps.LatLng(38.334818, -181.884886);
-        var end = new google.maps.LatLng(itemLng, itemLong);
+    //var end = new google.maps.LatLng(38.334818, -181.884886);
+    var end = new google.maps.LatLng(itemLng, itemLong);
 
     var bounds = new google.maps.LatLngBounds();
     bounds.extend(start);
@@ -255,30 +276,30 @@ export class HomePageComponent implements OnInit, AfterViewInit {
     });
   }
 
-   // modal pop up open starts
-   open(content) {
-     debugger
+  // modal pop up open starts
+  open(content) {
+    debugger
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then((result) => {
       debugger
-       this.closeResult = 'Closed with: ${result}';
+      this.closeResult = 'Closed with: ${result}';
       console.log('save button')
     }, (reason) => {
 
       console.log("Reason:" + reason);
-      this.closeResult = 'Dismissed ${this.getDismissReason('+ reason+ ')}';
+      this.closeResult = 'Dismissed ${this.getDismissReason(' + reason + ')}';
 
     });
-} // modal pop up open ends
+  } // modal pop up open ends
 
-private getDismissReason(reason: any): string {
-  if (reason === ModalDismissReasons.ESC) {
-    return 'by pressing ESC';
-  } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-    return 'by clicking on a backdrop';
-  } else {
-    return  `with: ${reason}`;
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return `with: ${reason}`;
+    }
   }
-}
 
   // isItemIntersted(itemId: string) {
 
@@ -299,23 +320,23 @@ private getDismissReason(reason: any): string {
   //     //  return false;
   //     }
   //   }
-    // var ItemDetails = this.items.filter(
-    //   itemObj => itemObj.itemInterest != null && itemObj.itemInterest.length > 0 ? itemObj.itemInterest.filter(itemInterestedData =>
-    //     itemInterestedData.itemId === itemId && itemInterestedData.userId === localStorage.getItem('currentUser')) : [{}]);
+  // var ItemDetails = this.items.filter(
+  //   itemObj => itemObj.itemInterest != null && itemObj.itemInterest.length > 0 ? itemObj.itemInterest.filter(itemInterestedData =>
+  //     itemInterestedData.itemId === itemId && itemInterestedData.userId === localStorage.getItem('currentUser')) : [{}]);
 
-    // //itemObj.itemInterest!=null && itemObj.itemInterest[0].itemId === itemId && itemObj.itemInterest[0].userId  === localStorage.getItem('currentUser'));
-    // debugger
-    // if (ItemDetails.length > 0) {
-    //   if (ItemDetails[0].itemInterest[0].isItemInterested)
-    //     return true;
-    //   else
-    //     return false;
-    // }
-    // else
-    //   return false;
-    //     if(localStorage.getItem('currentUser')!=null && localStorage.getItem('currentUser')!='')
-    // {
-    //   this.isUserLogin=true;
-    // }
+  // //itemObj.itemInterest!=null && itemObj.itemInterest[0].itemId === itemId && itemObj.itemInterest[0].userId  === localStorage.getItem('currentUser'));
+  // debugger
+  // if (ItemDetails.length > 0) {
+  //   if (ItemDetails[0].itemInterest[0].isItemInterested)
+  //     return true;
+  //   else
+  //     return false;
+  // }
+  // else
+  //   return false;
+  //     if(localStorage.getItem('currentUser')!=null && localStorage.getItem('currentUser')!='')
+  // {
+  //   this.isUserLogin=true;
+  // }
   //}
 }

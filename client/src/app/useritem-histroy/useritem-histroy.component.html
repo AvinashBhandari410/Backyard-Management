@@ -1,14 +1,15 @@
 <!------ Include the above in your HEAD tag ---------->
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
 <!-- NAVBAR CODE END -->
 <div class="container">
     <div class="row">
         <div class="col-md-12 text-center">
             <br />
-            <h2>Bootstrap Collapse Panel With Icon</h2>
-            <h5> Crafted by <a href="http://www.designbootstrap.com/" target="_blank">DesignBootstrap</a> </h5>
-            <br />
+            <h2>Item Management</h2>
+            <h5>
+                <span class="glyphicon glyphicon-star" style=" font-size: 30px;color: orange"></span>
+                Interested users history <span class="glyphicon glyphicon-star" style=" font-size: 30px;color: orange"></span></h5>
         </div>
     </div>
     <div class="row">
@@ -18,34 +19,49 @@
                     <div class="panel panel-default">
                         <div class="panel-heading" role="tab" id="heading_{{item._id._id}}">
                             <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse_{{item._id._id}}" aria-expanded="true"
-                                attr.aria-controls="collapse_{{item._id._id}}">Item Name: {{item._id.item_name }}
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse_{{item._id._id}}"
+                                    aria-expanded="true" attr.aria-controls="collapse_{{item._id._id}}" title="{{item._id.item_name }}">Item Name:
+                                    {{item._id.item_name.substring(0,40) }}
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapse_{{item._id._id}}" class="panel-collapse collapse in" role="tabpanel" attr.aria-labelledby="heading_{{item._id._id}}">
+                        <div id="collapse_{{item._id._id}}" class="panel-collapse collapse in" role="tabpanel"
+                            attr.aria-labelledby="heading_{{item._id._id}}">
                             <div class="panel-body">
-                                    <div class="table-responsive">
-                                            <table class="table table-striped w-auto">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Full Name</th>
-                                                        <th>Email Address</th>
-                                                        <th>Contact Number</th>
-                                                        <th>Contact Email Address</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody  *ngFor="let interestedItem of item.interestedUsers" class="table-info">
-                                                    <tr>
-                                                        <td>{{interestedItem.interestedfirstname }}</td>
-                                                        <td>{{interestedItem.interesteduseremail }}</td>
-                                                        <td>{{interestedItem.interesteduseraddress }}</td>
-                                                        <td>{{interestedItem.interesteduserphonenumber }}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div> 
-                              
+                                <div class="table-responsive">
+                                    <table class="table table-striped w-auto">
+                                        <thead>
+                                            <tr>
+                                                <!-- <th>#</th> -->
+                                                <th>Full Name</th>
+                                                <th>Email Address</th>
+                                                <th>Address</th>
+                                                <th>Mobile</th>
+                                                <!-- <th *ngFor="let interestedItem of item.interestedUsers;">{{interestedItem.interesteduseremail}}</th> -->
+                                                <!-- <th><a href="javascript:void(0)" title="Contact"><span class="glyphicon glyphicon-envelope" style=" font-size: 20px;color: black"
+                                                    (click)="mailToEmailAddress=interestedItem.interesteduseremail;popupItemName=item._id.item_name;open(content);"></span></a></th> -->
+                                            </tr>
+                                        </thead>
+                                        <tbody *ngFor="let interestedItem of item.interestedUsers" class="table-info">
+                                            <tr>
+                                                <!-- <td class="active">
+                                                    <input type="checkbox" class="select-item checkbox" name="select-item"
+                                                        value="1000" />
+                                                </td> -->
+                                                <td>{{interestedItem.interestedfirstname }}</td>
+                                                <td>{{interestedItem.interesteduseremail }}</td>
+                                                <td>{{interestedItem.interesteduseraddress }}</td>
+                                                <td>{{interestedItem.interesteduserphonenumber }}</td>
+                                                <td><a href="javascript:void(0)" title="Contact"><span class="glyphicon glyphicon-envelope" style=" font-size: 20px;color: black"
+                                                        (click)="mailToEmailAddress=interestedItem.interesteduseremail;popupItemName=item._id.item_name;open(content);"></span></a>
+                                                </td>
+                                            </tr>
+                                            <!-- <tr><td><a href="javascript:void(0)" title="Contact"><span class="glyphicon glyphicon-envelope" style=" font-size: 20px;color: black"
+                                                (click)="mailToEmailAddress=interestedItem.interesteduseremail;popupItemName=item._id.item_name;open(content);"></span></a></td></tr> -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -82,5 +98,46 @@
             </div>
         </div>
     </div>
+
+    <ng-template #content let-c="close" let-d="dismiss">
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Send Mail</h4>
+            <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="mailForm" (ngSubmit)="sendMail()" #f="ngForm">
+                <!-- <div class="formGroup">
+                    <input type="text" class="form-control" formControlName="pickUpFromEmail" id="pickUpFromEmail" name="pickUpFromEmail" placeholder="From Recipient" disabled="disabled" tabindex="1">
+                </div>
+                <pre></pre> -->
+                <div class="formGroup">
+                    <label for="to" class="sr-only">To</label>
+                    <input type="text" class="form-control" formControlName="pickUpToEmail" id="pickUpToEmail" name="pickUpToEmail"
+                     placeholder="To Recipient" required value="{{mailToEmailAddress}}" tabindex="2">
+                </div>
+                <pre></pre>
+                <div class="formGroup">
+                    <label for="subject" class="sr-only">Subject</label>
+                    <input type="text" class="form-control" formControlName="pickUpToSubject" id="pickUpToSubject" name="pickUpToSubject"
+                     value="Regarding Item: {{popupItemName}}" placeholder="Mail Subject" required tabindex="3">
+                </div>
+                <pre></pre>
+                <div class="formGroup">
+                    <label for="body" class="sr-only">Body</label>
+                    <textarea class="form-control" formControlName="pickUpToBody" rows="4" id="pickUpToBody" name="pickUpToBody"
+                     placeholder="Mail Body" tabindex="4"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-dark" tabindex="5" (click)="sendMail();d('Cross click')">Send Mail</button>
+                </div>
+            </form>
+        </div>
+    </ng-template>
 </div>
 <!-- CONATINER END -->
+
+<!-- Table design -->
+<!-- https://mdbootstrap.com/docs/jquery/tables/responsive/ -->
+<!-- https://getbootstrap.com/docs/4.0/content/tables/ -->

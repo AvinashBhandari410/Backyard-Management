@@ -38,12 +38,12 @@ export class ItemService {
   // }
 
   getAllUserItemHistory(id: string): Observable<ItemDetails[]> {
-    debugger
-    return this.http.get<ItemDetails[]>(this.dataUrl + "/item/allUserItemHistory/" + id,  {}).pipe(
+    
+    return this.http.get<ItemDetails[]>(this.dataUrl + "/item/allUserItemHistory/" + id, {}).pipe(
       catchError(this.handleError('item', {} as ItemDetails[])));
   }
 
-  
+
 
   getAllHomeItems(itemdata: any): Observable<ItemDetails[]> {
 
@@ -51,9 +51,15 @@ export class ItemService {
   }
 
 
+  getAllLogInUserHomeItems(id: string): Observable<ItemDetails[]> {
+    
+    return this.http.get<ItemDetails[]>(this.dataUrl + "/item/allLogInUserHomeItems/" + id, {}).pipe(
+      catchError(this.handleError('item', {} as ItemDetails[])));
+  }
+
   getAllUserItems(id: string): Observable<ItemDetails[]> {
 
-    return this.http.get<ItemDetails[]>(this.dataUrl + "/item/allItems/" + id,  {}).pipe(
+    return this.http.get<ItemDetails[]>(this.dataUrl + "/item/allUserItems/" + id, {}).pipe(
       catchError(this.handleError('item', {} as ItemDetails[])));
   }
 
@@ -113,7 +119,7 @@ export class ItemService {
     formData.append('userId', localStorage.getItem("currentUser"));
 
     //formData.forEach(data=>console.log('form data for each ',data)
-    debugger
+  //  debugger
     return this.http.post<any>(this.dataUrl + "/item/addItem", formData)
       .pipe(tap(data => console.log('data from upload service', data)),
         catchError(this.handleError('ride', {} as any)));
@@ -156,6 +162,16 @@ export class ItemService {
         catchError(this.handleError('item', {} as Item)));
   }
 
+  updateAllItemStatus(currentStatus: boolean): Observable<any> {
+    let item = {
+      isItem_Approved: currentStatus
+    }
+//    debugger
+    return this.http.put(this.dataUrl + "/item/updateAllItemStatus", item)
+      .pipe(
+        catchError(this.handleError('item', {} as Item)));
+  }
+
 
 
   updateItemAvailablity(_itemId: string, isItemSoldout: boolean): Observable<any> {
@@ -175,17 +191,28 @@ export class ItemService {
   }
 
 
+  updateItemSoldOut(_itemId: string, isItemSoldout: boolean): Observable<any> {
+    let item = {
+      _id: _itemId,
+      isItem_Available: isItemSoldout
+    }
+    return this.http.put(this.dataUrl + "/item/updateItemAvailablity", item)
+      .pipe(
+        catchError(this.handleError('item', {} as Item)));
+  }
+
+
   // Get the login details
   sendMail(mailHeader: any): Observable<Mail> {
 
-    let mailContent = {
-      from_email_address: mailHeader.from_email_address,
-      to_email_address: mailHeader.to_email_address,
+    var mailContent = {
+      from: mailHeader.from,
+      to: mailHeader.to,
       subject: mailHeader.subject,
-      mailbody: mailHeader.mailbody
+      text: mailHeader.text
     }
-    return this.http.post<Mail>(this.dataUrl + "/mail/sendmail", mailContent)
-      .pipe(tap(data => console.log('data from mail send', data)),
+    return this.http.post<Mail>(this.dataUrl + "/mail/sendMail", mailContent)
+      .pipe(tap(data => console.log('data from user save',data)),
         catchError(this.handleError('mail', {} as Mail)));
   }
 
@@ -199,7 +226,7 @@ export class ItemService {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error('handleError catched this error ', error); // log to console instead
+      console.log('handleError catched this error ', error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       // this.log(`${operation} failed: ${error.message}`);

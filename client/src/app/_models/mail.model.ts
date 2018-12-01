@@ -1,6 +1,6 @@
 export interface Mail {
-    from_email_address: string;
-    to_email_address: string;
+    from: string;
+    to: string;
     subject: string;
-    mailbody:string;
+    text:string;
 }

@@ -13,11 +13,13 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { GoogleMapsComponent } from './google-maps/google-maps.component';
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component'
 import { UseritemHistroyComponent } from './useritem-histroy/useritem-histroy.component';
+import { ItemRequestComponent } from './item-request/item-request.component';
 const routes: Routes = [
 { path: 'dashboard', component: DashboardComponent,  children: [
   {path: 'addItem', component: AddItemComponent},
   {path: 'userItemManagement', component: UserItemManagementComponent},
-  {path: 'itemRequest', component: UseritemHistroyComponent}
+  {path: 'itemUserInterestHistory', component: UseritemHistroyComponent},
+  {path: 'itemRequest', component: ItemRequestComponent},
   
   // otherwise redirect to home
   //{ path: '**', component: HomeDashboardComponent }
@@ -40,7 +42,8 @@ const routes: Routes = [
   {path: 'home', component: HomePageComponent}, //landing page
   {path: 'addItem', component: AddItemComponent},
   {path: 'userItemManagement', component: UserItemManagementComponent},
-  {path: 'itemRequest', component: UseritemHistroyComponent},
+  {path: 'itemUserInterestHistory', component: UseritemHistroyComponent},
+  {path: 'itemRequest', component: ItemRequestComponent},
   {path: '', component: HomePageComponent}] }
 ]
 

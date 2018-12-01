@@ -34,13 +34,15 @@
 
         <div class="col-lg-3 col-md-6 mb-4" *ngFor="let item of items | paginate: { itemsPerPage:8, currentPage: p }">
             <div class="card">
-                <img class="card-img-top" src="{{item.item_image}}" alt="" height="150">
+                <img class="card-img-top" src="{{item._id.item_image}}" alt="" height="150">
+                <!-- <ngx-image-zoom [thumbImage]=item.item_image [fullImage]=item.item_image></ngx-image-zoom> -->
 
-                <font size="2">{{item.item_cost | currency:'USD' }}</font>
+                <!-- <img [imageZoom]="item.item_image" [src]="{{item.item_image}}" [style.width.px]="100" [style.height.px]="50"> -->
+                <font size="2">{{item._id.item_cost | currency:'USD' }}</font>
                 <div class="card-body">
-                    <h6 class="card-title"><label class="card-text" title="{{item.item_name}}">{{item.item_name.substring(0,15)}}</label></h6>
+                    <h6 class="card-title"><label class="card-text" title="{{item.item_name}}">{{item._id.item_name.substring(0,15)}}</label></h6>
                     <label class="text-secondary" title="{{item.item_description}}">
-                        <font size="2">{{item.item_Location}}- {{item.item_date}}</font>
+                        <font size="2">{{item._id.item_Location}}- {{item._id.item_date}}</font>
                     </label>
                     <!-- <label class="card-text" title="{{item.item_description}}">{{item.item_description.substring(0,100)}}</label> -->
                 </div>
@@ -49,18 +51,26 @@
                     <!-- <button type="button" (click)="ShowItemDetails(item._id)" *ngIf="item.isItem_Available" class="btn btn-primary"
                         data-toggle="modal" attr.data-target="#myModal_{{item._id}}">Available</button> -->
 
-                    <button type="button" *ngIf="item.isItem_Available" data-toggle="modal" class="btn btn-primary"
-                        (click)="popupItemId=item._id; popupItemImage=item.item_image;popupItemName=item.item_name;popupItemDescription=item.item_description;popupItemCost=item.item_cost;open(content);ShowItemDetails(item._id,item.latitude, item.longitude)">
+                    <button type="button" *ngIf="item._id.isItem_Available" data-toggle="modal" class="btn btn-primary"
+                        (click)="popupItemId=item._id._id; popupItemImage=item._id.item_image;popupItemName=item._id.item_name;popupItemDescription=item._id.item_description;popupItemCost=item._id.item_cost;open(content);ShowItemDetails(item._id.itemId,item._id.latitude, item._id.longitude)">
                         Available</button>
-                    <!-- <button type="button" (click)="requestForItem(item._id)" *ngIf="item.isItem_Available" class="btn btn-primary"
-                            data-toggle="modal">Available</button> -->
 
-                    <img *ngIf="!item.isItem_Available" width="100" height="30" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZ4tCwLMjmAgIgRzBTUQK16D9OE95zzLehgizC6S57qlgwuukW">
+                    <img *ngIf="!item._id.isItem_Available" width="100" height="30" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZ4tCwLMjmAgIgRzBTUQK16D9OE95zzLehgizC6S57qlgwuukW">
 
                     <!-- <a href="javascript:void(0)" *ngIf="!item.isItem_Available" class="btn btn-link" aria-disabled="true">Soldout</a> -->
                     <!-- <a  class="btn btn-primary">Find Out More!</a> -->
                 </div>
-                <ng-container *ngIf="item.item_interested != null && item.item_interested.length>0; then loggedIn; else loggedOut">
+
+                <div *ngIf="isUserLogin">
+                    <a href="javascript:void(0)" *ngIf="!item.userInterested && item._id.isItem_Available">
+                        <span class="glyphicon glyphicon-star-empty" style=" font-size: 30px;color: orange" (click)="addUserItemInterest(item._id.itemId,true)"></span>
+                    </a>
+
+                    <a href="javascript:void(0)" *ngIf="item.userInterested && item._id.isItem_Available">
+                        <span class="glyphicon glyphicon-star" style=" font-size: 30px;color: orange" (click)="deleteUserItemInterest(item.itemInterestedId)"></span>
+                    </a>
+                </div>
+                <!-- <ng-container *ngIf="item.item_interested != null && item.item_interested.length>0; then loggedIn; else loggedOut">
                 </ng-container>
 
                 <ng-template #loggedIn>
@@ -87,7 +97,7 @@
                             </a>
                         </div>
                     </div>
-                </ng-template>
+                </ng-template> -->
             </div>
         </div>
         <!-- /.row -->
@@ -101,7 +111,7 @@
 <ng-template #content let-modal>
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">
-                <label title="{{popupItemName}}">{{popupItemName.substring(0,63)}}</label>
+            <label title="{{popupItemName}}">{{popupItemName.substring(0,63)}}</label>
         </h4>
         <!-- <a href="#" data-dismiss="modal" class="pull-right" style="margin-left: -170px"><span class="glyphicon glyphicon-remove"></span></a> -->
         <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
@@ -111,7 +121,7 @@
     <div class="modal-body">
         <div class="row">
             <div class="col-md-6 product_img">
-                <img src="{{popupItemImage}}"  width="100%" height="40%" class="img-responsive">
+                <img src="{{popupItemImage}}" width="100%" height="40%" class="img-responsive">
                 <pre></pre>
                 <pre>Pickup Location</pre>
                 <div id="map-canvas" width="40%" height="20%"></div>
@@ -121,11 +131,11 @@
                 <label title="{{popupItemDescription}}">{{popupItemDescription.substring(0,200)}}</label>
                 <h3 class="cost"><span class="glyphicon"></span>{{popupItemCost | currency:'USD'}}</h3>
                 <div class="space-ten"></div>
-                <div class="btn-ground">
+                <!-- <div class="btn-ground">
 
                     <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-star"></span>
                         Ask for Details</button>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
