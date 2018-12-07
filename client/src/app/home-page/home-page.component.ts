@@ -32,7 +32,7 @@ export class HomePageComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    debugger
+    //debugger
     // this.scriptloader.load('googlemaps').then(data => {
     //   var directionsService = new google.maps.DirectionsService();
     //   var directionsDisplay = new google.maps.DirectionsRenderer();
@@ -71,15 +71,15 @@ export class HomePageComponent implements OnInit, AfterViewInit {
     // }).catch(error => console.log(error));
 
     // debugger;
-    this.scriptloader.load('googlemaps').then(data => {
-      debugger
+    this.scriptloader.load('googlemaps', 'googledistance').then(data => {
+      // debugger
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
           var pos = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           };
-          debugger
+          //   debugger
           this.curLocLat = pos.lat;
           this.curLncLng = pos.lng;
           // var google_map_pos = new google.maps.LatLng( pos.lat, pos.lng );
@@ -98,18 +98,55 @@ export class HomePageComponent implements OnInit, AfterViewInit {
           //  );
 
           // console.log(pos);
+
+          this.itemBind();
         }.bind(this));
       }
     }).catch(error => console.log(error));
+    // this.scriptloader.load('googledistance').then(data => {
+    //   this.itemBind();
+    // }).catch(error => console.log(error));
+    if (localStorage.getItem('currentUser') != null && localStorage.getItem('currentUser') != '') {
+      this.isUserLogin = true;
+      this.loggedInUserId = localStorage.getItem('currentUser');
+    }
   }
   constructor(private itemService: ItemService, private route: ActivatedRoute,
     private router: Router, private fb: FormBuilder, private scriptloader: ScriptService, private modalService: NgbModal) { }
 
   ngOnInit() {
-    this.itemBind();
-    if (localStorage.getItem('currentUser') != null && localStorage.getItem('currentUser') != '') {
-      this.isUserLogin = true;
-      this.loggedInUserId = localStorage.getItem('currentUser');
+
+  }
+
+  filterItemsDistanceWise(){
+
+  }
+
+
+
+  response_data(responseDis, status) {
+    console.log('status',status);
+    if (status !== google.maps.DistanceMatrixStatus.OK || status != "OK") {
+      console.log('Error:', status);
+    } else {
+      console.log('responseDis', responseDis);
+
+      var origins = responseDis.originAddresses;
+      var destinations = responseDis.destinationAddresses;
+      // https://developers.google.com/maps/documentation/javascript/distancematrix
+      for (var i = 0; i < origins.length; i++) {
+        var results = responseDis.rows[i].elements;
+        for (var j = 0; j < results.length; j++) {
+          var element = results[j];
+          var distance = element.distance.text;
+          var onlyMiles=distance.split(' ')[0];
+
+          this.items[j].distanceFromCurLoc=parseFloat(onlyMiles);
+          // items sequence // same seq google return value or not.
+        }
+      }
+      console.log('this.items',this.items);
+
     }
   }
 
@@ -117,34 +154,114 @@ export class HomePageComponent implements OnInit, AfterViewInit {
   itemBind() {
 
     if (localStorage.getItem("currentUser") === null) {
-       // getting all items and fill
-    this.itemService.getAllHomeItems(this.items)
-      .subscribe(itemdata => {
-        if (itemdata) {
-          debugger
-          this.items = itemdata
-          console.log("All homes items: " + this.items);
-        }
-      }, err => {
-        console.log('Something went wrong!');
-      }
-      );  //saveItem ends
-    }
-    else {
-      // getting all rides and fill
-      this.itemService.getAllLogInUserHomeItems(localStorage.getItem('currentUser'))
+      // getting all items and fill
+      this.itemService.getAllHomeItems(this.items)
         .subscribe(itemdata => {
           if (itemdata) {
-            //  debugger
+            //   debugger
             this.items = itemdata
-            console.log("All home items for loggin users: " + this.items);
+            console.log("All homes items: ", this.items);
+
+
+
+            var origin: google.maps.LatLng = new google.maps.LatLng(this.curLocLat, this.curLncLng);
+            var destinations: any[] = [];
+
+            this.items.forEach(item => {
+              let newLoc = new google.maps.LatLng(item._id.latitude, item._id.longitude);
+              destinations.push(newLoc);
+
+
+            });
+            console.log('destinations', destinations);
+
+
+            // origin[] and destination[] 
+            // you got lat and longi from db.
+            // origin // current
+            // foreach Database data. take longi and lati from that.
+            // add those new google.maps.LatLng(55.930385, -3.118425)
+
+            // here u will get the array of multiple destinations ryt?
+
+            // var origin1 = new google.maps.LatLng(55.930385, -3.118425);
+            // var destinationA = new google.maps.LatLng(50.087692, 14.421150);
+            // var destinationB = new google.maps.LatLng(50.087692, 14.421150);
+
+            var service = new google.maps.DistanceMatrixService();
+            service.getDistanceMatrix(
+              {
+                origins: [origin], // origin pass
+                destinations: destinations, // array of destination.
+                unitSystem: google.maps.UnitSystem.IMPERIAL, //miles
+                durationInTraffic: true,
+                avoidHighways: false,
+                travelMode: google.maps.TravelMode.DRIVING,
+                avoidTolls: false
+              }, this.response_data.bind(this));
           }
         }, err => {
           console.log('Something went wrong!');
         }
         );  //saveItem ends
     }
-  }
+    else {
+      // getting all rides and fill
+      this.itemService.getAllLogInUserHomeItems(localStorage.getItem('currentUser'))
+        .subscribe(itemdata => {
+          if (itemdata) {
+
+            //   debugger
+            this.items = itemdata
+            console.log("All homes items: ", this.items);
+
+
+
+            var origin: google.maps.LatLng = new google.maps.LatLng(this.curLocLat, this.curLncLng);
+            var destinations: any[] = [];
+
+            this.items.forEach(item => {
+              let newLoc = new google.maps.LatLng(item._id.latitude, item._id.longitude);
+              destinations.push(newLoc);
+
+
+            });
+            console.log('destinations', destinations);
+
+
+            // origin[] and destination[] 
+            // you got lat and longi from db.
+            // origin // current
+            // foreach Database data. take longi and lati from that.
+            // add those new google.maps.LatLng(55.930385, -3.118425)
+
+            // here u will get the array of multiple destinations ryt?
+
+            // var origin1 = new google.maps.LatLng(55.930385, -3.118425);
+            // var destinationA = new google.maps.LatLng(50.087692, 14.421150);
+            // var destinationB = new google.maps.LatLng(50.087692, 14.421150);
+
+            var service = new google.maps.DistanceMatrixService();
+            service.getDistanceMatrix(
+              {
+                origins: [origin], // origin pass
+                destinations: destinations, // array of destination.
+                unitSystem: google.maps.UnitSystem.IMPERIAL, //miles
+                durationInTraffic: true,
+                avoidHighways: false,
+                travelMode: google.maps.TravelMode.DRIVING,
+                avoidTolls: false
+              }, this.response_data.bind(this));
+            // //  debugger
+            // this.items = itemdata
+            // console.log("All home items for loggin users: " + this.items);
+          }
+        }, err => {
+          console.log('Something went wrong!');
+        }
+        );  //saveItem ends
+    } //else ends
+  } // method ends
 
   updateUserItemInterest(itemInterestId: string, isUserInterested: boolean) {
 
@@ -166,7 +283,7 @@ export class HomePageComponent implements OnInit, AfterViewInit {
   }
 
   deleteUserItemInterest(itemInterestId: string) {
-    debugger
+    // debugger
     this.itemService.deleteUserItemInterest(itemInterestId)
       .subscribe(itemData => {
         //  debugger
@@ -188,7 +305,7 @@ export class HomePageComponent implements OnInit, AfterViewInit {
 
 
   addUserItemInterest(itemId: string, isUserInterested: boolean) {
-    debugger
+    //  debugger
     this.itemService.addUserItemInterest(itemId, isUserInterested)
       .subscribe(itemData => {
         //debugger

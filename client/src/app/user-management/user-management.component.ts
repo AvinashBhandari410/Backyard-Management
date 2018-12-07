@@ -45,4 +45,17 @@ export class UserManagementComponent implements OnInit {
         }
         );
     }
+
+    updateAllUserStatus(currentStatus: boolean): void {
+      this.userService.updateAllUserStatus(currentStatus)
+        .subscribe(itemdata => {
+          if (itemdata) {
+            //          debugger
+            this.userBind();
+          }
+        }, (err) => {
+          console.log(err);
+        }
+        );
+    }
 }

@@ -73,7 +73,13 @@ export class AddItemComponent implements OnInit, AfterViewInit {
 
   async addItem(){
 
-    this.itemForm.value.item_Location = this.pickUpAuto.nativeElement.value;
+    //this.itemForm.value.item_Location = this.pickUpAuto.nativeElement.value;
+    this.itemForm.value.item_Location = ((document.getElementById("item_Location") as HTMLInputElement).value);
+    this.itemForm.value.item_name = ((document.getElementById("item_name") as HTMLInputElement).value);
+    this.itemForm.value.item_description = ((document.getElementById("item_description") as HTMLInputElement).value);
+    this.itemForm.value.item_cost = ((document.getElementById("item_cost") as HTMLInputElement).value);
+    this.itemForm.value.item_Location = ((document.getElementById("item_Location") as HTMLInputElement).value);
+    this.itemForm.value.isItem_Available = true;
 
     //get and set the longitude and lattitude
     const value = <any>await this.scriptloader.geocodeAddress(this.itemForm.value.item_Location);
@@ -85,12 +91,21 @@ export class AddItemComponent implements OnInit, AfterViewInit {
         if (itemData != null) {
 
           let mailContent = {
-            from_email_address: "avinash.bhandari24@gmail.com",
-            to_email_address: "avinashbhandari@outlook.com",
+            from: "avinash.bhandari24@gmail.com",
+            to: "avinashbhandari@outlook.com",
             subject: "Backyard Management: New item approval request",
-            mailbody: "Hello Admin, <br/> Please approve below item request Item Name: " + itemData.item_name + "Please click here for approval" + "localhost:4200/login"
+            mailbody: "Hello Admin,  Please approve below item request" +
+            "Item Name: " + itemData.item_name + " Please login for approval " + "localhost:4200/login"
           }
-          this.itemService.sendMail(mailContent);
+          this.itemService.sendMail(mailContent).subscribe(itemData => {
+            // this.loginshow = true
+            console.log('response from email', itemData);
+
+          },
+            err => {
+              console.log(err);
+            }
+          );
 
           this.itemSuccess = true
           this.item = itemData;

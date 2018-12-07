@@ -7,25 +7,59 @@ router.use(bodyParser.json());
 var user = require('../model/user');
 var nodemailer = require('nodemailer');
 
+//******************************************* */
+
 // creating new user
+// router.post('/register', function (req, res) {
+
+//     user.create({
+//         full_name: req.body.full_name,
+//         email_address: req.body.email_address,
+//         password: req.body.password,
+//         phone_number: req.body.phone_number,
+//         address: req.body.address,
+//         user_type: "admin",
+//         is_useractive: false,
+//         created_date: req.body.created_date
+//     },
+
+//         function (err, user) {
+//             if (err)
+//                 return res.status(500).send("There was a problem adding the information to the database.");
+//             res.status(200).send(user);
+//         });
+// });
+
+//******************************************* */
+
 router.post('/register', function (req, res) {
 
-    user.create({
-        full_name: req.body.full_name,
-        email_address: req.body.email_address,
-        password: req.body.password,
-        phone_number: req.body.phone_number,
-        address: req.body.address,
-        user_type: "user",
-        is_useractive: false,
-        created_date: req.body.created_date
-    },
+    user.findOne({ email_address: req.body.email_address }, function (err, existingUser) {
+        if (!err && existingUser) {
+            existingUser.is_useractive=true;
+            console.log("User Already exist", existingUser);
+            res.status(200).send(existingUser);
+        }
+        else {
+            console.log("New User creation request");
+            user.create({
+                full_name: req.body.full_name,
+                email_address: req.body.email_address,
+                password: req.body.password,
+                phone_number: req.body.phone_number,
+                address: req.body.address,
+                user_type: "user",
+                is_useractive: false,
+                created_date: req.body.created_date
+            },
 
-        function (err, user) {
-            if (err)
-                return res.status(500).send("There was a problem adding the information to the database.");
-            res.status(200).send(user);
-        });
+                function (err, user) {
+                    if (err)
+                        return res.status(500).send("There was a problem adding the information to the database.");
+                    res.status(200).send(user);
+                });
+        }
+    });
 });
 
 //return all the user in the database
@@ -48,7 +82,6 @@ router.put('/updateUserStatus', function (req, res) {
 
 //return a user on the basis of email and password
 router.post('/login', function (req, res) {
-    console.log('req ', req)
     debugger
     user.findOne({ email_address: req.body.email_address, password: req.body.password }, function (err, user) {
         if (err) return res.status(500).send("There was a problem finding the user.");
@@ -60,7 +93,7 @@ router.post('/login', function (req, res) {
 
 // // upload files
 // router.post('/sendMail', function (req, res) {
-
+ 
 //     // req.files is array of `photos` files
 //     // req.body will contain the text fields, if there were any ex :: req.body.itemname
 //     console.log("From Email: " + req.body.from);
@@ -89,6 +122,34 @@ router.post('/login', function (req, res) {
 // });
 
 
+router.put('/updateAllUserStatus', function (req, res) {
+    // item.find({}, req.body, { new: true }), function (err, post) {
+    //     console.log("Current Item Which we updated: " + req.body.is_useractive)
+    //     if (err)
+    //         return res.status(500).send("There was a problem adding the information to the database.");
+    //     res.status(200).send(post);
+    // }
+
+    console.log("Current Item Which we updated: " + req.body.is_useractive)
+    user.update({}, {
+
+        $set: {
+            "is_useractive": req.body.is_useractive,
+        }
+    }, { multi: true }, function (err, values) {
+        if (err) {
+            console.log("error on UPDATING");
+            return res.status(500).send("error");
+        }
+        else {
+            console.log("success on UPDATING");
+            res.status(200).send("success");
+        }
+    }
+    );
+});
+
+
 // creating new user
 router.post('/sendMail', function (req, res) {
 
@@ -98,15 +159,15 @@ router.post('/sendMail', function (req, res) {
     console.log("To Email: " + req.body.to);
     console.log("Subject Email: " + req.body.subject);
     console.log("Text Email: " + req.body.text);
-    
+
     var mailOptions = {
         from: req.body.from,
         to: req.body.to,
         subject: req.body.subject,
         text: req.body.text
-      };
+    };
 
-      
+
 
     transporter.sendMail(mailOptions, function (err, info) {
         if (err)

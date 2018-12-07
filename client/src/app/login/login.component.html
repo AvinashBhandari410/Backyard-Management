@@ -3,8 +3,8 @@
     <div class="col-xs-12 col-sm-8 col-md-12 col-sm-offset-2 col-md-offset-3">
       <!-- login form -->
       <ngb-alert *ngIf="signedUp" type="success" (close)="signedUp = null">User signed up successfully. Login please!</ngb-alert>
-      <ngb-alert *ngIf="signedUp" type="success" (close)="signedUp = null">User signed up successfully. Login please!</ngb-alert>
-      <form *ngIf="loginshow" [formGroup]="loginForm" (ngSubmit)="login()" class="form-signin">
+      <ngb-alert *ngIf="signedUpError" type="success" (close)="signedUp = null">User already exist. Login please!</ngb-alert>
+      <form *ngIf="loginshow" [formGroup]="loginForm" (ngSubmit)="login()" #f="ngForm" class="form-signin">
 
         <img class="mb-4" src="assets/UCM_logo.png" alt="" width="100" height="72">
         <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
@@ -51,7 +51,7 @@
           </div>
         </div>
         <div class="form-group">
-          <button class="btn btn-lg btn-primary btn-block" [disabled]="loginForm.invalid" type="submit">Sign in</button>
+          <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
           <button type="but ton" class="btn btn-link" (click)="loginshow=false">Sign Up</button>
         </div>
         <p>
@@ -62,14 +62,14 @@
 
 
       <!-- signup form -->
-      <form *ngIf="!loginshow" [formGroup]="signupForm" (ngSubmit)="signup()" class="form-signin">
+      <form *ngIf="!loginshow" [formGroup]="signupForm" (ngSubmit)="signup()" #f="ngForm"  class="form-signin">
         <img class="mb-4" src="assets/UCM_logo.png" alt="" width="100" height="72">
         <h1 class="h3 mb-3 font-weight-normal">Please sign Up</h1>
 
         <!-- signup name -->
         <div class="formGroup">
           <label for="full_name" class="sr-only">Name</label>
-          <input type="text" formControlName="full_name" class="form-control" placeholder="Name" required tabindex="1">
+          <input type="text" formControlName="full_name" class="form-control" placeholder="Name" required tabindex="1" id="full_name" name="full_name">
           <div [ngClass]="{'has-error': (signupForm.controls.full_name.errors && signupForm.controls.full_name.dirty),
             'has-success': !signupForm.controls.full_name.errors}">
             <ul class="help-block">
@@ -83,7 +83,7 @@
         <div class="formGroup">
           <!-- signup email -->
           <label for="email_address" class="sr-only">Email address</label>
-          <input type="email" formControlName="email_address" class="form-control" placeholder="Email address" required tabindex="2">
+          <input type="email" formControlName="email_address" class="form-control" placeholder="Email address" required tabindex="2"  id="email_address" name="email_address">
           <div [ngClass]="{'has-error': (signupForm.controls.email_address.errors && signupForm.controls.email_address.dirty),
     'has-success': !signupForm.controls.email_address.errors}">
             <ul class="help-block">
@@ -104,7 +104,8 @@
         <!-- signup password -->
         <div class="formGroup">
           <label for="password" class="sr-only">Password</label>
-          <input type="password" formControlName="password" class="form-control" placeholder="Password" required tabindex="3">
+          <input type="password" formControlName="password" class="form-control" placeholder="Password" required tabindex="3"
+          id="password" name="password">
           <div [ngClass]="{'has-error': (signupForm.controls.password.errors && signupForm.controls.password.dirty),
             'has-success': !signupForm.controls.password.errors}">
             <ul class="help-block">
@@ -123,6 +124,7 @@
         <div class="formGroup">
           <label for="confirmPassword" class="sr-only">Confirm Password</label>
           <input type="password" formControlName="confirmPassword" class="form-control" placeholder="confirm Password"
+          id="confirmPassword" name="confirmPassword"
             required tabindex="4">
           <div [ngClass]="{'has-error': (signupForm.controls.confirmPassword.errors && signupForm.controls.confirmPassword.dirty),
             'has-success': !signupForm.controls.confirmPassword.errors}">
@@ -141,7 +143,8 @@
 
         <div class="formGroup">
           <label for="phone_number" class="sr-only">Phone Number</label>
-          <input type="text" formControlName="phone_number" class="form-control" placeholder="Phone Number" required tabindex="5">
+          <input type="text" formControlName="phone_number" class="form-control" placeholder="Phone Number" required tabindex="5"
+          id="phone_number" name="phone_number">
           <div [ngClass]="{'has-error': (signupForm.controls.phone_number.errors && signupForm.controls.phone_number.dirty),
           'has-success': !signupForm.controls.phone_number.errors}">
             <ul class="help-block">
@@ -154,7 +157,8 @@
         </div>
         <div class="formGroup">
           <label for="address" class="sr-only">Address</label>
-          <input type="text" formControlName="address" class="form-control" placeholder="Address" required tabindex="5"> 
+          <input type="text" formControlName="address" class="form-control" placeholder="Address" required tabindex="5"
+          id="address" name="address"> 
             <!-- <input type="text" id="address" name="address" formControlName="address" #pickUpAuto class="form-control" tabindex="5"
             placeholder="Address" aria-multiline="true" tabindex="5"> -->
           <div [ngClass]="{'has-error': (signupForm.controls.address.errors && signupForm.controls.address.dirty),

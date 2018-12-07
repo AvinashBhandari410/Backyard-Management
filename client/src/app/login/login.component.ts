@@ -18,6 +18,7 @@ export class LoginComponent implements OnInit {
   signupForm: FormGroup;
   user: User;
   signedUp: boolean;
+  signedUpError: boolean;
 
 
   constructor(private userService: UserService, private route: ActivatedRoute, private itemService: ItemService,
@@ -27,14 +28,19 @@ export class LoginComponent implements OnInit {
 
   // login
   login(): void {
+    debugger
     // sign up
+    this.loginForm.value.email_address = ((document.getElementById("email_address") as HTMLInputElement).value);
+    this.loginForm.value.password = ((document.getElementById("password") as HTMLInputElement).value);
+
     this.userService.login(this.loginForm.value)
       .subscribe(userdata => {
+        debugger
         if (userdata != null) {
           // this.signedUp=true
           // this.loginshow=true
           this.user = userdata;
-
+          debugger
           if (this.user.user_type.toLocaleLowerCase() == "admin") {
             localStorage.setItem('currentUser', this.user._id);
             this.router.navigate(["/admindashboard"]);
@@ -59,21 +65,34 @@ export class LoginComponent implements OnInit {
   }
   // sign up
   signup(): void {
+    debugger
+
+    this.signupForm.value.full_name = ((document.getElementById("full_name") as HTMLInputElement).value);
+    this.signupForm.value.email_address = ((document.getElementById("email_address") as HTMLInputElement).value);
+    this.signupForm.value.password = ((document.getElementById("password") as HTMLInputElement).value);
+    this.signupForm.value.confirmPassword = ((document.getElementById("confirmPassword") as HTMLInputElement).value);
+    this.signupForm.value.phone_number = ((document.getElementById("phone_number") as HTMLInputElement).value);
+    this.signupForm.value.address = ((document.getElementById("address") as HTMLInputElement).value);
+
     this.userService.signUp(this.signupForm.value)
       .subscribe(userdata => {
         debugger
-        if (userdata) {
+        console.log(userdata);
+        if (!userdata.is_useractive) {
 
           var mailContent = {
             from: "avinash.bhandari24@gmail.com",
-            to: userdata.email_address,
-            subject: "Backyard Management: New item approval request",
-            text: "Hello Admin, <br/> Please approve below item request User fullname: " + userdata.full_name + "<br/> Email Address: " + userdata.email_address + "Please click here for approval" + "localhost:4200/login"
+            //  to: userdata.email_address,
+            to: "avinashbhandari@outlook.com",
+            subject: "Backyard Management: New user approval request",
+            text: "Hello Admin, Please approve below user request User fullname: " + userdata.full_name + " Email Address: " + userdata.email_address +
+              +"Please login for approval " + "localhost:4200/login"
             //text: "test mail"
           }
           this.itemService.sendMail(mailContent).subscribe(userdata => {
             // debugger
-            // this.signedUp = true
+            this.signedUp = true
+            this.signedUpError = false;
             // this.loginshow = true
             console.log('response from email', userdata);
 
@@ -82,6 +101,10 @@ export class LoginComponent implements OnInit {
               console.log(err);
             }
           );
+        }
+        else {
+          this.signedUpError = true;
+          this.signedUp = false;
         };
       }, err => {
         console.log(err);

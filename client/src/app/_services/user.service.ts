@@ -73,6 +73,16 @@ export class UserService {
         catchError(this.handleError('user', {} as User)));
   }
 
+  updateAllUserStatus(currentStatus: boolean): Observable<any> {
+    let item = {
+      is_useractive: currentStatus
+    }
+//    debugger
+    return this.http.put(this.dataUrl + "/user/updateAllUserStatus", item)
+      .pipe(
+        catchError(this.handleError('item', {} as User)));
+  }
+
 
   /**
  * Handle Http operation that failed.
@@ -93,4 +103,5 @@ export class UserService {
       return of(result as T);
     };
   }
+  
 }

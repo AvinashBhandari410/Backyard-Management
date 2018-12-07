@@ -10,9 +10,9 @@
       <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
         <a class="nav-link" [routerLink]="['home']">Home</a>
       </li>
-      <li class="nav-item" *ngIf="!isUserLogin" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
+      <!-- <li class="nav-item" *ngIf="!isUserLogin" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
         <a class="nav-link">SignUp</a>
-      </li>
+      </li> -->
 
       <li class="nav-item" *ngIf="isUserLogin" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
           <!-- <a class="nav-link" routerLink="/addride">Add A Ride</a> -->
@@ -22,9 +22,11 @@
           <a class="nav-link" [routerLink]="['userItemManagement']" href="#">Item Management</a>
         </li>
         <li class="nav-item" *ngIf="isUserLogin" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
-          <a class="nav-link" [routerLink]="['itemRequest']" href="#">Item Request</a>
+          <a class="nav-link"  [routerLink]="['itemUserInterestHistory']" href="#">Item user history</a>
         </li>
-  
+        <li class="nav-item" *ngIf="isUserLogin" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}">
+          <a class="nav-link" [routerLink]="['itemRequest']" href="#">Requested Items</a>
+        </li>  
     </ul>
 
     <ul class="navbar-nav ml-auto">

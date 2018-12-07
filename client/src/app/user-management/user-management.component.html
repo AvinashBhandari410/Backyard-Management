@@ -7,6 +7,17 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
+        <div class="dropdown">
+            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Approved All
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <!-- <a class="dropdown-item" href="#">Approved</a>
+              <a class="dropdown-item" href="#">Not Approved</a> -->
+              <a class="dropdown-item" href="javascript:void(0)" (click)="updateAllUserStatus(true)">Approved</a>
+          <a class="dropdown-item"  href="javascript:void(0)" (click)="updateAllUserStatus(false)">Not Approved</a>
+            </div>
+          </div>
       <h4>All registered users</h4>
       <div class="table-responsive">
         <table id="mytable" class="table table-bordred table-striped">
@@ -29,7 +40,7 @@
               <td>{{user.created_date}}</td>
               <td>
                 <button type="button" *ngIf="user.is_useractive" class="btn btn-success" (click)="updateStatus(user._id,user.is_useractive)">Approved </button>
-                <button type="button" *ngIf="!user.is_useractive" class="btn btn-warning" (click)="updateStatus(user._id,user.is_useractive)">Pending </button>
+                <button type="button" *ngIf="!user.is_useractive" class="btn btn-warning" (click)="updateStatus(user._id,user.is_useractive)">Not Approved </button>
               </td>
             </tr>
           </tbody>
