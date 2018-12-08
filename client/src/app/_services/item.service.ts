@@ -108,7 +108,7 @@ export class ItemService {
 
     formData.append('item_name', itemdata.item_name);
     formData.append('item_number', "ITEM_" + Math.floor(1000 + Math.random() * 9000));
-    formData.append('item_date', new Date().toLocaleDateString("en-US"));
+    formData.append('item_date', new Date().toLocaleTimeString("en-US"));
     formData.append('item_description', itemdata.item_description);
     formData.append('item_cost', itemdata.item_cost);
     formData.append('item_Location', itemdata.item_Location);
@@ -194,11 +194,22 @@ export class ItemService {
   updateItemSoldOut(_itemId: string, isItemSoldout: boolean): Observable<any> {
     let item = {
       _id: _itemId,
-      isItem_Available: isItemSoldout
+      isItem_Available: isItemSoldout,
+      item_updatedDate: new Date().toLocaleTimeString("en-US"),
+      item_soldOutDate: Date.now()
     }
+    debugger
     return this.http.put(this.dataUrl + "/item/updateItemAvailablity", item)
       .pipe(
         catchError(this.handleError('item', {} as Item)));
+  }
+
+
+
+  getAllRecentSoldOutItems(id: string): Observable<ItemDetails[]> {
+
+    return this.http.get<ItemDetails[]>(this.dataUrl + "/item/allRecentSoldOutItems/" + id, {}).pipe(
+      catchError(this.handleError('item', {} as ItemDetails[])));
   }
 
 

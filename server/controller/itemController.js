@@ -47,6 +47,47 @@ router.get('/allItems/', function (req, res) {
         });
 }); // ends
 
+// //return all the user in the database starts
+// router.get('/allRecentSoldOutItems/:id', function (req, res) {
+//     var now = new Date();
+//     var fiveminago = new Date(now.getTime() - 5 * 60 * 1000);
+//     item.
+//         //get all items which updated less than 5 minutes ago or more than file minutes ago
+
+//         find({ item_date: { $gt: fiveminago }}
+//         // find({
+//         //     $and: [
+//         //         { $or: [{ item_date: { $lt: fiveminago } }, { $gt: fiveminago }] },
+//         //         { $or: [{ userid: mongoose.Types.ObjectId(req.body.id) }] }
+//         //     ]
+//         // }
+//         ).sort({ 'item_date': -1 }).
+//         populate({ path: 'userId', select: 'full_name' }).
+//         exec(function (err, items) {
+//             if (err)
+//                 return res.status(500).send(err);
+//             console.log("Items from Server:" + items)
+//             res.status(200).send(items);
+
+//         });
+// }); // ends
+
+
+
+// //return all the user in the database starts
+// router.get('/allRecentSoldOutItems/:userid', function (req, res) {
+//     //  res.status(200).send(req);
+
+//     _getAllRecentSoldOutItems(req.params.userid).exec(function (err, values) {
+//         if (err)
+//             return res.status(500).send(err);
+//         console.log(values)
+//         res.status(200).send(values)
+//     })
+
+// }); // ends
+
+
 
 //return all the user in the database starts
 router.get('/allUserItemHistory/:userid', function (req, res) {
@@ -59,6 +100,113 @@ router.get('/allUserItemHistory/:userid', function (req, res) {
         res.status(200).send(values)
     })
 
+}); // ends
+
+
+
+
+//return all the user in the database starts
+router.get('/allLogInUserHomeItems/:userid', function (req, res) {
+    item.aggregate([
+        {
+            $lookup:
+            {
+                from: "iteminterests",
+                localField: "_id",
+                foreignField: "itemId",
+                as: "item_interested"
+            }
+        },
+        {
+            $match: {
+                //$and: [{ "userId": mongoose.Types.ObjectId("5bea2322564eca53bcc76b72") }]
+                $and: [{ "isItem_Approved": true }]
+            }
+        },
+        {
+            $unwind: { path: '$item_interested', preserveNullAndEmptyArrays: true }
+        },
+        {
+            $unwind: { path: '$item_interested.userId', preserveNullAndEmptyArrays: true }
+        },
+        {
+            $unwind: { path: '$item_interested.itemId', preserveNullAndEmptyArrays: true }
+        },
+        {
+            $project:
+            {
+                itemId: '$_id',
+                item_name: '$item_name',
+                item_number: '$item_number',
+                item_image: '$item_image',
+                item_cost: '$item_cost',
+                item_Location: '$item_Location',
+                item_date: '$item_date',
+                isItem_Available: '$isItem_Available',
+                latitude: '$latitude',
+                longitude: '$longitude',
+                item_description: '$item_description',
+                // here to project whatever is needed.
+                itemInterestedId: '$item_interested._id',
+                interestedUserId: '$item_interested.userId'
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    itemId: '$itemId',
+                    item_name: '$item_name',
+                    item_number: '$item_number',
+                    item_image: '$item_image',
+                    item_cost: '$item_cost',
+                    item_Location: '$item_Location',
+                    item_date: '$item_date',
+                    isItem_Available: '$isItem_Available',
+                    item_description: '$item_description',
+                    latitude: '$latitude',
+                    longitude: '$longitude'
+                    //and here to take them in aggregation.
+                },
+                interestedUserId: { $push: '$interestedUserId' },
+                itemInterestedId: { $push: '$itemInterestedId' }
+            }
+        },
+        {
+            $project:
+            {
+                _id: '$_id',
+                "userInterested": {
+                    $in: [mongoose.Types.ObjectId(req.params.userid), "$interestedUserId"]
+                    //$in: [mongoose.Types.ObjectId(localStorage.getItem('currentUser')), "$interestedUserId"]
+                },
+                interestedUserId: '$interestedUserId',
+                itemInterestedId: '$itemInterestedId'
+            }
+        },
+        {
+            $project:
+            {
+                _id: '$_id',
+                userInterested: '$userInterested',
+                index: { $indexOfArray: ["$interestedUserId", mongoose.Types.ObjectId(req.params.userid)] },
+                interestedUserId: '$interestedUserId',
+                itemInterestedId: '$itemInterestedId'
+            }
+        },
+        {
+            $project:
+            {
+                _id: '$_id',
+                userInterested: '$userInterested',
+                itemInterestedId: { $arrayElemAt: ['$itemInterestedId', '$index'] }
+            }
+        }
+    ], function (err, result) {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        res.status(200).send(result);
+    });
 }); // ends
 
 //return all the user in the database starts
@@ -270,6 +418,30 @@ router.get('/allHomeItems/', function (req, res) {
 }); // ends
 
 //return all the user in the database starts
+router.get('/allRecentSoldOutItems/:id', function (req, res) {
+    var now = new Date();
+    var fiveminago = new Date(now.getTime() - 2 * 60 * 1000);
+
+    queryParams = {
+        'userId': {
+            $eq: mongoose.Types.ObjectId(req.params.id)
+        },
+        'item_soldOutDate': { $gt: fiveminago }
+    }
+    item.
+        find({ $and: [ { userId: { $eq: mongoose.Types.ObjectId(req.params.id)} }, { item_soldOutDate: { $gt: fiveminago } } ] }).sort({ 'item_date': -1 }).
+        populate({ path: 'userId', select: 'full_name' }).
+        exec(function (err, items) {
+            if (err)
+                return res.status(500).send("There was a problem adding the information to the database.");
+            // console.log("Items from Server:" + items)
+            res.status(200).send(items);
+
+        });
+}); // ends
+
+
+//return all the user in the database starts
 router.get('/allUserItems/:id', function (req, res) {
     item.
         find({ 'userId': mongoose.Types.ObjectId(req.params.id) }).sort({ 'item_date': -1 }).
@@ -283,7 +455,7 @@ router.get('/allUserItems/:id', function (req, res) {
         });
 }); // ends
 
-// save ride starts
+// save  starts
 router.post('/addItem', function (req, res) {
     upload(req, res, function (err) {
         if (err instanceof multer.MulterError) {
@@ -370,7 +542,7 @@ router.put('/updateItemAvailablity', function (req, res) {
 });
 
 
-// save ride starts
+// save  starts
 router.post('/addUserItemInterest', function (req, res) {
 
     itemInterest.create({
@@ -424,6 +596,112 @@ router.get('/allUserItemHistory/:userid', function (req, res) {
 }); // ends
 
 
+
+
+
+
+
+function _getAllRecentSoldOutItems(userid) {
+    var now = new Date();
+    var fiveminago = new Date(now.getTime() - 5 * 60 * 1000);
+    let queryParams = {}
+    queryParams = {
+        'userId': {
+            $eq: mongoose.Types.ObjectId(userid)
+        },
+        'item_soldOutDate': { $gt: fiveminago }
+    }
+
+    return item.aggregate([
+        // define some conditions here 
+        {
+            $match: queryParams
+            // $match: {
+            //     //$and: [{ "userId": mongoose.Types.ObjectId("5bea2322564eca53bcc76b72") }]
+            //     $and: [{ "userId": mongoose.Types.ObjectId(req.body.id) }]
+            // }
+        },
+        {
+            $lookup:
+            {
+                from: "iteminterests",
+                localField: "_id",
+                foreignField: "itemId",
+                as: "iteminterestsDetails"
+            }
+        }, // item interest lookup ends
+        {
+
+            $unwind: { path: "$iteminterestsDetails" } // ,preserveNullAndEmptyArrays: true
+
+        },
+
+        {
+            $lookup:
+            {
+                from: "users",       // other table name
+                localField: "iteminterestsDetails.userId",   // name of users table field
+                foreignField: "_id", // name of userinfo table field
+                as: "user_info"         // alias for userinfo table
+            }
+        },
+        {
+            $unwind: { path: "$user_info" } //,preserveNullAndEmptyArrays: true
+        },
+        {
+            $project: { // what you want to manipulate before aggregation
+                _id: 1, //id 
+                item_name: '$item_name',
+                item_number: '$item_number',
+                item_image: '$item_image',
+                item_cost: '$item_cost',
+                item_Location: '$item_Location',
+                item_date: '$item_date',
+                isItem_Available: '$isItem_Available',
+                latitude: '$latitude',
+                longitude: '$longitude',
+                item_description: '$item_description',
+                interestedUsers: {
+                    interesteduserID: '$iteminterestsDetails.userId',
+                    interestedfirstname: '$user_info.full_name',
+                    interesteduseremail: '$user_info.email_address',
+                    interesteduseraddress: '$user_info.address',
+                    interesteduserphonenumber: '$user_info.phone_number'
+                }
+
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    _id: '$_id',
+                    item_name: '$item_name',
+                    item_number: '$item_number',
+                    item_image: '$item_image',
+                    item_cost: '$item_cost',
+                    item_Location: '$item_Location',
+                    item_date: '$item_date',
+                    isItem_Available: '$isItem_Available',
+                    latitude: '$latitude',
+                    longitude: '$longitude',
+                    item_description: '$item_description'
+                },
+                interestedUsers: { $push: '$interestedUsers' }
+                // interestedusers: "$interestedusers",
+                // interesteduserdetails: "$interesteduserdetails"
+            }
+        }
+
+        //  { $project : { items: "items", full_name : "$user_info1.full_name" , email_address : "$user_info1.email_address" } }
+
+    ])
+    // ]), function (err, result) {
+    //     if (err) {
+    //         return res.status(500).send(err);
+    //     }
+    //     res.status(200).send(result);
+    // });
+}
 function _getUserItemHistory(userid) {
     let queryParams = {}
     queryParams = {
@@ -522,15 +800,15 @@ function _getUserItemHistory(userid) {
     //     res.status(200).send(result);
     // });
 }
-// cancel ride
+// cancel 
 router.get('/deleteUserItemInterest/:itemInterestId/', function (req, res) {
     itemInterest.
-        findByIdAndDelete({ _id: req.params.itemInterestId }, req.body, function (err, ride) {
+        findByIdAndDelete({ _id: req.params.itemInterestId }, req.body, function (err, user) {
             if (err)
                 return res.status(500).send("There was a problem adding the information to the database.");
             res.status(200).send("ID: " + req.body._id);
             // res.redirect(url.format({
-            //     pathname: "/ride/",
+            //     pathname: "//",
             //     query: {
             //         "userid": req.params.userid,
             //     }

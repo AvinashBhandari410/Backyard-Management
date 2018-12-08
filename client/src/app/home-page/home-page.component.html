@@ -1,3 +1,4 @@
+<!-- <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"> -->
 <!-- Navigation -->
 <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
@@ -28,8 +29,41 @@
 </nav> -->
 
 <!-- Page Content -->
+<div>
+    <!-- <select>
+        <option>Near By</option>
+        <option> <a href="javascript:void(0)" (change)="filterItemsDistanceWise(50);">50 miles</a></option>
+        <option> <a href="javascript:void(0)" (change)="filterItemsDistanceWise(100);">100 miles</a></option>
+    </select> -->
+
+    <select (change)="filterItemsDistanceWise($event.target.value)">
+        <option value="10000">--All--</option>
+        <option value="20">--20 miles--</option>
+        <option value="50">--50 miles--</option>
+        <option value="100">--100 miles--</option>
+        <option value="200">--200 miles--</option>
+        <option value="5000">--5000 miles--</option>
+    </select>
+</div>
+
+<!-- <div class="dropdown">
+    <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        Item Filter
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" href="javascript:void(0)" (click)="itemBind()">All Items</a>
+        <a class="dropdown-item" href="javascript:void(0)" (click)="filterItemsDistanceWise(20)">20 miles</a>
+        <a class="dropdown-item" href="javascript:void(0)" (click)="filterItemsDistanceWise(50)">50 miles</a>
+        <a class="dropdown-item" href="javascript:void(0)" (click)="filterItemsDistanceWise(100)">100 miles</a>
+        <a class="dropdown-item" href="javascript:void(0)" (click)="filterItemsDistanceWise(200)">200 miles</a>
+        <a class="dropdown-item" href="javascript:void(0)" (click)="filterItemsDistanceWise(5000)">5000 miles</a>
+    </div>
+</div> -->
+
 <div class="container">
     <!-- Page Features -->
+
     <div class="row text-center">
 
         <div class="col-lg-3 col-md-6 mb-4" *ngFor="let item of items | paginate: { itemsPerPage:8, currentPage: p }">
@@ -56,7 +90,7 @@
                         Available</button>
 
                     <img *ngIf="!item._id.isItem_Available" width="100" height="30" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZ4tCwLMjmAgIgRzBTUQK16D9OE95zzLehgizC6S57qlgwuukW">
-
+                    
                     <!-- <a href="javascript:void(0)" *ngIf="!item.isItem_Available" class="btn btn-link" aria-disabled="true">Soldout</a> -->
                     <!-- <a  class="btn btn-primary">Find Out More!</a> -->
                 </div>
@@ -70,6 +104,8 @@
                         <span class="glyphicon glyphicon-star" style=" font-size: 30px;color: orange" (click)="deleteUserItemInterest(item.itemInterestedId)"></span>
                     </a>
                 </div>
+
+                <span>Distance: {{item.distanceFromCurLoc}} Miles </span>
                 <!-- <ng-container *ngIf="item.item_interested != null && item.item_interested.length>0; then loggedIn; else loggedOut">
                 </ng-container>
 

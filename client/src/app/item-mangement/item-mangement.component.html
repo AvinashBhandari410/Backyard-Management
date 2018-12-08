@@ -12,19 +12,20 @@
             Not Approved </button>
         </div> -->
 
-        <div class="dropdown">
-            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Approved All
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <!-- <a class="dropdown-item" href="#">Approved</a>
+      <div class="dropdown">
+        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          Approved All
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <!-- <a class="dropdown-item" href="#">Approved</a>
               <a class="dropdown-item" href="#">Not Approved</a> -->
-              <a class="dropdown-item" href="javascript:void(0)" (click)="updateAllItemStatus(true)">Approved</a>
-          <a class="dropdown-item"  href="javascript:void(0)" (click)="updateAllItemStatus(false)">Not Approved</a>
-            </div>
-          </div>
+          <a class="dropdown-item" href="javascript:void(0)" (click)="updateAllItemStatus(true)">Approved</a>
+          <a class="dropdown-item" href="javascript:void(0)" (click)="updateAllItemStatus(false)">Not Approved</a>
+        </div>
+      </div>
       <h1 class="text-center">All Items</h1>
-      
+
       <div *ngFor="let item of items | paginate: { itemsPerPage:5, currentPage: p }">
         <div class="list-group" *ngIf="changeOdd">
           <a href="javascript:void(0)" ngClass="{{isodd ? 'list-group-item active' : 'list-group-item'}}">
@@ -56,7 +57,7 @@
         </div>
       </div>
       <ul class="pagination pull-right">
-          <pagination-controls (pageChange)="p = $event"></pagination-controls>
+        <pagination-controls (pageChange)="p = $event"></pagination-controls>
       </ul>
     </div>
   </div>

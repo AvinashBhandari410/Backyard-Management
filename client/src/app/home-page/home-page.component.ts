@@ -9,6 +9,8 @@ import { ScriptService } from '../shared/script.service'
 import { forEach } from '@angular/router/src/utils/collection';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ImageZoomModule } from 'angular2-image-zoom';
+import { map } from 'rxjs/operators';
+import { parse } from 'querystring';
 
 @Component({
   selector: 'app-home-page',
@@ -18,6 +20,7 @@ import { ImageZoomModule } from 'angular2-image-zoom';
 export class HomePageComponent implements OnInit, AfterViewInit {
   @ViewChild('map-canvas') mapRouteDirection: ElementRef;
   items: ItemDetails[]
+  tempItems: ItemDetails[]
   isodd = false;
   isUserLogin: boolean = false;
   loggedInUserId: string = "";
@@ -118,14 +121,20 @@ export class HomePageComponent implements OnInit, AfterViewInit {
 
   }
 
-  filterItemsDistanceWise(){
-
+  filterItemsDistanceWise(nearBy: string) {
+    // all the items. by value.
+    var itemsData =JSON.parse(JSON.stringify(this.tempItems));
+    //
+    debugger
+    this.items=itemsData.filter((value,index,array)=>{
+      return value.distanceFromCurLoc < parseInt(nearBy + "");
+    });
   }
 
 
 
   response_data(responseDis, status) {
-    console.log('status',status);
+    console.log('status', status);
     if (status !== google.maps.DistanceMatrixStatus.OK || status != "OK") {
       console.log('Error:', status);
     } else {
@@ -139,13 +148,13 @@ export class HomePageComponent implements OnInit, AfterViewInit {
         for (var j = 0; j < results.length; j++) {
           var element = results[j];
           var distance = element.distance.text;
-          var onlyMiles=distance.split(' ')[0];
-
-          this.items[j].distanceFromCurLoc=parseFloat(onlyMiles);
+          var onlyMiles = distance.split(' ')[0].replace(",", "");
+          //          debugger
+          this.items[j].distanceFromCurLoc = parseInt(onlyMiles);
           // items sequence // same seq google return value or not.
         }
       }
-      console.log('this.items',this.items);
+      console.log('this.items', this.items);
 
     }
   }
@@ -160,6 +169,8 @@ export class HomePageComponent implements OnInit, AfterViewInit {
           if (itemdata) {
             //   debugger
             this.items = itemdata
+            this.tempItems=itemdata;
+            debugger
             console.log("All homes items: ", this.items);
 
 
@@ -213,6 +224,8 @@ export class HomePageComponent implements OnInit, AfterViewInit {
 
             //   debugger
             this.items = itemdata
+            this.tempItems=itemdata;
+
             console.log("All homes items: ", this.items);
 
 

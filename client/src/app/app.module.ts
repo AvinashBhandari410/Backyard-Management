@@ -25,6 +25,7 @@ import { UseritemHistroyComponent } from './useritem-histroy/useritem-histroy.co
 // Import the library
 import { NgxImgZoomModule } from 'ngx-img-zoom';
 import { ItemRequestComponent } from './item-request/item-request.component';
+import { RecentSoldItemsComponent } from './recent-sold-items/recent-sold-items.component';
 // import {NgbDateCustomParserFormatter} from './shared/dateFormat'
 // import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 
@@ -45,7 +46,8 @@ import { ItemRequestComponent } from './item-request/item-request.component';
      HomePageComponent,
      GoogleMapsComponent,
      UseritemHistroyComponent,
-     ItemRequestComponent
+     ItemRequestComponent,
+     RecentSoldItemsComponent
   ],
   imports: [
     AgmCoreModule.forRoot({

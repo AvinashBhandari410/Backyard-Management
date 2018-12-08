@@ -36,7 +36,7 @@ router.post('/register', function (req, res) {
 
     user.findOne({ email_address: req.body.email_address }, function (err, existingUser) {
         if (!err && existingUser) {
-            existingUser.is_useractive=true;
+            existingUser.is_useractive = true;
             console.log("User Already exist", existingUser);
             res.status(200).send(existingUser);
         }
@@ -83,17 +83,30 @@ router.put('/updateUserStatus', function (req, res) {
 //return a user on the basis of email and password
 router.post('/login', function (req, res) {
     debugger
+
     user.findOne({ email_address: req.body.email_address, password: req.body.password }, function (err, user) {
-        if (err) return res.status(500).send("There was a problem finding the user.");
-        console.log('user from userController', user);
-        res.status(200).send(user);
+        if (err) {
+            return res.status(500).send("There was a problem finding the user.");
+        }
+        else if (!err && user) {
+            res.status(200).send(user);
+            console.log('user from userController', user);
+        }
+        else
+        {
+            var userObj = {is_useractive: false};
+            console.log("Username or password is not correct.", userObj);
+            res.status(200).send(userObj);
+        }
+        
+        
     });
 });
 
 
 // // upload files
 // router.post('/sendMail', function (req, res) {
- 
+
 //     // req.files is array of `photos` files
 //     // req.body will contain the text fields, if there were any ex :: req.body.itemname
 //     console.log("From Email: " + req.body.from);

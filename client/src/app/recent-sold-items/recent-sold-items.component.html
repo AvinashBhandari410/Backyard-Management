@@ -1,0 +1,54 @@
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<!-- Paging apply through below website -->
+<!-- https://www.youtube.com/watch?v=7sMu-qO5IN8 -->
+
+<div class="container">
+  
+<select (change)="itemBind($event.target.value)">
+    <option value="">--Item Filter--</option>
+    <option value="1">--All Items--</option>
+    <option value="5">--Items sold in last 5 minutes--</option>
+  </select>
+  <div class="row">
+    <div class="well">
+      <h1 class="text-center">All Items</h1>
+      
+      <div *ngFor="let item of items | paginate: { itemsPerPage:5, currentPage: p }">
+      <div class="list-group">
+        <a href="javascript:void(0)" class="list-group-item active">
+          <div class="media col-md-3">
+            <figure class="pull-left">
+              <!-- <img class="media-object img-rounded img-responsive" src="assets/UCM_logo.png" alt="placehold.it/350x250">-->
+              <img class="media-object img-rounded img-responsive" src="{{item.item_image}}" alt="placehold.it/350x250">  
+            </figure>
+          </div>
+          <div class="col-md-6">
+            <h4 class="list-group-item-heading"> Item Name: {{item.item_name}} </h4>
+            <h4 class="list-group-item-heading"> Item Number: {{item.item_number}} </h4>
+            <h5 class="list-group-item-heading"> Item Description: </h5>
+            <p class="list-group-item-text"> {{item.item_description}}
+            </p>
+          </div>
+          <div class="col-md-3 text-center">
+            <h2> {{item.item_cost | currency:'USD' }}</h2>
+            <p *ngIf="item.isItem_Approved"> Item Status: Approved </p>
+            <p *ngIf="!item.isItem_Approved"> Item Status: Pending </p>
+            <p> Created Date: {{item.item_date}} </p>
+            <p> Soldout Date: {{item.item_updatedDate}} </p>
+            <p> Pickup Location: {{item.item_Location}} </p>
+            <!-- <p>{{item._id}}</p>
+            <p>{{item.isItem_Available}}</p> -->
+            <!-- <p><button  *ngIf="item.isItem_Available && item.isItem_Approved" class="btn btn-success" (click)="updateStatus(item._id,item.isItem_Available)">
+                Mark Item Soldout </button></p>
+            <p><button  *ngIf="!item.isItem_Available && item.isItem_Approved" class="btn btn-warning" (click)="updateStatus(item._id,item.isItem_Available)">
+                    Mark Item Available </button></p> -->
+          </div>
+        </a>
+      </div>
+      </div>
+      <ul class="pagination pull-right">
+          <pagination-controls (pageChange)="p = $event"></pagination-controls>
+      </ul>
+    </div>
+  </div>
+</div>

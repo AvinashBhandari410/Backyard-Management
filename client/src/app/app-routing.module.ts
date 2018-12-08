@@ -14,12 +14,15 @@ import { GoogleMapsComponent } from './google-maps/google-maps.component';
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component'
 import { UseritemHistroyComponent } from './useritem-histroy/useritem-histroy.component';
 import { ItemRequestComponent } from './item-request/item-request.component';
+import {RecentSoldItemsComponent} from './recent-sold-items/recent-sold-items.component';
+
 const routes: Routes = [
 { path: 'dashboard', component: DashboardComponent,  children: [
   {path: 'addItem', component: AddItemComponent},
   {path: 'userItemManagement', component: UserItemManagementComponent},
   {path: 'itemUserInterestHistory', component: UseritemHistroyComponent},
   {path: 'itemRequest', component: ItemRequestComponent},
+  {path: 'recentSoldOutItems', component: RecentSoldItemsComponent},
   
   // otherwise redirect to home
   //{ path: '**', component: HomeDashboardComponent }
@@ -44,6 +47,7 @@ const routes: Routes = [
   {path: 'userItemManagement', component: UserItemManagementComponent},
   {path: 'itemUserInterestHistory', component: UseritemHistroyComponent},
   {path: 'itemRequest', component: ItemRequestComponent},
+  {path: 'recentSoldOutItems', component: RecentSoldItemsComponent},
   {path: '', component: HomePageComponent}] }
 ]
 

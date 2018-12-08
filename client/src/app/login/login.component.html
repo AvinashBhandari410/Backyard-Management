@@ -4,6 +4,7 @@
       <!-- login form -->
       <ngb-alert *ngIf="signedUp" type="success" (close)="signedUp = null">User signed up successfully. Login please!</ngb-alert>
       <ngb-alert *ngIf="signedUpError" type="success" (close)="signedUp = null">User already exist. Login please!</ngb-alert>
+      <ngb-alert *ngIf="loginError" type="danger" (close)="signedUp = null">Username or password is not correct.</ngb-alert>
       <form *ngIf="loginshow" [formGroup]="loginForm" (ngSubmit)="login()" #f="ngForm" class="form-signin">
 
         <img class="mb-4" src="assets/UCM_logo.png" alt="" width="100" height="72">

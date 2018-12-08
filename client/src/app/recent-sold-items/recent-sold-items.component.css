@@ -1,0 +1,80 @@
+
+/* GENERAL STYLES */
+body {
+    
+    font-family: Verdana;
+}
+
+/* FANCY COLLAPSE PANEL STYLES */
+.fancy-collapse-panel .panel-default > .panel-heading {
+padding: 0;
+
+}
+.fancy-collapse-panel .panel-heading a {
+padding: 12px 35px 12px 15px;
+display: inline-block;
+width: 100%;
+background-color: lightseagreen;
+color: #ffffff;
+position: relative;
+text-decoration: none;
+}
+.fancy-collapse-panel .panel-heading a:after {
+font-family: "FontAwesome";
+content: "\f147";
+position: absolute;
+right: 20px;
+font-size: 20px;
+font-weight: 400;
+top: 50%;
+line-height: 1;
+margin-top: -10px;
+}
+
+.fancy-collapse-panel .panel-heading a.collapsed:after {
+content: "\f196";
+}
+
+.collapse {
+    display: none;
+  }
+  
+  .collapse.in {
+    display: block;
+  }
+  
+  tr.collapse.in {
+    display: table-row;
+  }
+  
+  tbody.collapse.in {
+    display: table-row-group;
+  }
+
+  .glyphicon {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  @font-face {
+    font-family:'Glyphicons Halflings';src:url(https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/fonts/glyphicons-halflings-regular.eot);src:url(https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/fonts/glyphicons-halflings-regular.eot?#iefix) format('embedded-opentype'),url(https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/fonts/glyphicons-halflings-regular.woff2) format('woff2'),url(https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/fonts/glyphicons-halflings-regular.woff) format('woff'),url(https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/fonts/glyphicons-halflings-regular.ttf) format('truetype'),url(https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular) format('svg');
+  }
+  
+  .glyphicon-star:before {
+    content: "\e006";
+  }
+  .glyphicon-star-empty:before {
+    content: "\e007";
+  }
+
+  .glyphicon-envelope::before{
+    content:"\2709";
+  }
+  

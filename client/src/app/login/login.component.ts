@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
   user: User;
   signedUp: boolean;
   signedUpError: boolean;
-
+  loginError: boolean;
 
   constructor(private userService: UserService, private route: ActivatedRoute, private itemService: ItemService,
     private router: Router,
@@ -37,20 +37,27 @@ export class LoginComponent implements OnInit {
       .subscribe(userdata => {
         debugger
         if (userdata != null) {
-          // this.signedUp=true
-          // this.loginshow=true
-          this.user = userdata;
-          debugger
-          if (this.user.user_type.toLocaleLowerCase() == "admin") {
-            localStorage.setItem('currentUser', this.user._id);
-            this.router.navigate(["/admindashboard"]);
+
+          if (userdata.is_useractive == true) {
+            // this.signedUp=true
+            // this.loginshow=true
+
+            this.user = userdata;
+            debugger
+            if (this.user.user_type.toLocaleLowerCase() == "admin") {
+              localStorage.setItem('currentUser', this.user._id);
+              this.router.navigate(["/admindashboard"]);
+            }
+            else if (userdata.is_useractive === true && this.user.user_type.toLocaleLowerCase() === "user") {
+              localStorage.setItem('currentUser', this.user._id);
+              this.router.navigate(["/dashboard"]);
+            }
+            else {
+              // pop up user is not active.
+            }
           }
-          else if (userdata.is_useractive === true && this.user.user_type.toLocaleLowerCase() === "user") {
-            localStorage.setItem('currentUser', this.user._id);
-            this.router.navigate(["/dashboard"]);
-          }
-          else {
-            // pop up user is not active.
+          else if (!userdata.is_useractive) {
+            this.loginError = true;
           }
         }
         else {

@@ -4,6 +4,8 @@ var ItemSchema=new mongoose.Schema({
     item_name:String,
     item_number: String,
     item_date:String,
+    item_updatedDate:String,
+    item_soldOutDate:Date,
     item_Location:String,
     longitude:Number,
     latitude:Number,
@@ -13,7 +15,7 @@ var ItemSchema=new mongoose.Schema({
     isItem_Approved: Boolean,
 	isItem_Available: Boolean,
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    itemId: { type: mongoose.Schema.Types.ObjectId, ref: 'ItemInterest' }
+    itemId: { type: mongoose.Schema.Types.ObjectId, ref: 'ItemInterest' },
 });
 mongoose.model('Item',ItemSchema);
 
